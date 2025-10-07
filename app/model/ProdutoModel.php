@@ -16,22 +16,19 @@ class ProdutoModel
     {
         try 
         {
-            $sql = "SELECT * FROM Produtos ORDER BY id";
-            $stm = Conexao::Conexao()->prepare($sql);
-            $stm->execute();
+            $sql = "SELECT * FROM Produtos ORDER BY id"; // SQL para listar todos os produtos
+            $stm = Conexao::Conexao()->prepare($sql);  // Prepara a query
+            $stm->execute();                            // Executa a query
 
-                $listarProdutos = $stm->fetchAll(PDO::FETCH_OBJ);
-
-                 return $listarProdutos;
-                
+            $listarProdutos = $stm->fetchAll(PDO::FETCH_OBJ); // Pega todos os resultados como objetos
+            return $listarProdutos;                             // Retorna o array de objetos
+        
         } 
             catch (PDOException $e) 
             {
-                 throw new Exception("error". $e->getMessage());
+                throw new Exception("error" . $e->getMessage()); // Lança exceção em caso de erro
             }
     }
-
-   
 
 
 }

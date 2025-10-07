@@ -8,20 +8,20 @@ header('Content-Type: application/json; charset=utf-8');
 
 $produtoController = new ProdutoController();
 
-// URI completa
+// Pega a URI completa
 $uri = $_SERVER['REQUEST_URI'];
 
-// Remove o prefixo da URL correspondente à pasta do projeto
+// Remove prefixo da pasta do projeto (ex: /estoque/public)
 $path = substr($uri, strlen('/estoque/public'));
 
-    // Agora a rota
+// Verifica a rota e método
     if ($path === '/api/produtos' && $_SERVER['REQUEST_METHOD'] === 'GET') 
     {
-        $produtoController->exibirProdutos();
+        $produtoController->exibirProdutos(); // Chama método da API
     } 
         else 
         {
-            http_response_code(404);
+            http_response_code(404); // Rota não encontrada
             echo json_encode(["erro" => "Rota não encontrada"]);
         }
 

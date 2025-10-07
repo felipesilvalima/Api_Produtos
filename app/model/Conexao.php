@@ -8,21 +8,24 @@ use PDOException;
 
 class Conexao
 {
-     public static function Conexao()
+    public static function Conexao()
     { 
         try 
         {
-            $conexao = null;
+            $conexao = new PDO(
+            "mysql: host=localhost; dbname=controler_de_estoque", 
+            "root", 
+            ""
+            ); // Cria a conexão PDO
 
-            $conexao = new PDO("mysql: host=localhost; dbname=controler_de_estoque","root","");
-            $conexao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $conexao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Configura para lançar exceções
 
-                return $conexao;
-                 
+            return $conexao; // Retorna a conexão
         } 
             catch (PDOException $e) 
             {
-                throw new Exception("error". $e->getMessage());
+                throw new Exception("error" . $e->getMessage()); // Lança exceção em caso de erro
             }
-    }
+}
+
 }
