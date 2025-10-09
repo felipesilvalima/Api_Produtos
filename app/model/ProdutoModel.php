@@ -3,12 +3,8 @@
 namespace app\model;
 
 use Exception;
-use model\Conexao\Conexao;
 use PDO;
 use PDOException;
-
-require_once __DIR__.'/Conexao.php';
-
 class ProdutoModel
 {
     

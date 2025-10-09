@@ -1,0 +1,15 @@
+{
+    "name": "fabio/estoque",
+    "autoload": {
+        "psr-4": {
+            "app\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Felipe silva lima",
+            "email": "felipesilvalima200@gmail.com"
+        }
+    ],
+    "require": {}
+}
