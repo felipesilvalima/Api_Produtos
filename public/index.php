@@ -6,7 +6,4 @@ use app\routes\Router;
 
 require_once __DIR__. '/../vendor/autoload.php';
 
-var_dump(Uri::get('path'));
-var_dump(Request::get());
-var_dump(Router::Routes());
-var_dump(Router::load('ProdutoController', 'exibirProdutos'));
+Router::execute();

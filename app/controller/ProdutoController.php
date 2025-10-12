@@ -17,8 +17,6 @@ class ProdutoController
             $Produtos = new ProdutoModel();
             $listaProdutos = $Produtos->exibirTodosProdutos(); // Busca todos os produtos
         
-            if($_SERVER['REQUEST_METHOD'] === 'GET') // se o método da requisição for GET
-            {
                 if(empty($listaProdutos)) 
                 {
                     http_response_code(404); // Código 404 se não houver produtos
@@ -29,18 +27,19 @@ class ProdutoController
                         http_response_code(200); // Código 200 OK
                         echo json_encode($listaProdutos); // Retorna lista de produtos em JSON
                     }         
-            }
-                else
-                {
-                    http_response_code(405);
-                    echo json_encode(["error" => "Método não permitido"]);
-                }
+              
         } 
             catch (PDOException $e) 
             {
                 throw new Exception("error" . $e->getMessage());
             }
        
+    }
+
+
+    public function teste()
+    {
+        echo "executando o metodo teste";
     }
 
 }
