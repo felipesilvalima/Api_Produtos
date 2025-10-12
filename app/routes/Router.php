@@ -2,6 +2,7 @@
 
 namespace app\routes;
 
+use app\controller\ProdutoController;
 use app\helpers\Request;
 use app\helpers\Uri;
 
@@ -10,79 +11,46 @@ use PDOException;
 
 class Router
 {
-
-  public static function load(string $controller, string $method) // controller e métodos que vão ser chamados
-  {
-      try 
-      {
-        //varificar se controller existe
-        $controllerNamespace = 'app\\controller' . '\\' . $controller;
-
-        if(!class_exists($controllerNamespace))
-        {
-            throw new Exception("O controller {$controller} não existe");
-        }
-
-          $controllerIstancia = new $controllerNamespace; //criando istancia
-
-          //varificar se existe método no controller
-          if(!method_exists($controllerIstancia, $method))
-          {
-            throw new Exception("O Método {$method} não existe no controller {$controller}");
-          }
-            
-            $controllerIstancia->$method(); // chamando o método
-        
-      } 
-        catch (PDOException $e) 
-        {
-            echo"error" . $e->getMessage();
-        }  
-  }
-
-
-    public static function Routes(): array // Rotas recebendo controller e método 
-    {
-        return [
-
-          'GET' => [
-            '/produtos' => fn() => self::load('ProdutoController', 'exibirProdutos')
-          ]
-
-        ];
-    }
-
     public static function execute()
     {
       try 
       {
          header('Content-Type: application/json; charset=utf-8'); // configurando a página para retornar json
 
-          $routes = self::Routes(); // rotas
-          $request =  $_SERVER['REQUEST_METHOD']; // pegando o método da requisição
-          $uriPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH); // pegando a uri da requisição
+          $produto = new ProdutoController();
 
-          if(!isset($routes[$request])) // se método não existir
+          // Captura a URL requisitada
+          $request = $_SERVER['REQUEST_URI'];
+
+          // Remove parâmetros de query string (ex: ?teste=1)
+          $request = parse_url($request, PHP_URL_PATH);
+
+          // Roteamento simples
+          if ($request === "/produtos") 
           {
-            echo json_encode(["error" => "Método não permitido"]);
-            die;
-          }
-
-            $router = $routes[$request][$uriPath] ?? null; // pegando a uri das rotas
-            
-            if(!isset($router)) // se uri não existir dentro das rotas
+            // Retorna todos os usuários 
+            $produto->exibirProdutos();
+          } 
+            elseif (preg_match("/\/produtos\/(\d+)/", $request, $matches)) 
             {
-              echo json_encode(["error" => "Rota não encontrada"]);
-              die;
-            }
+                // Captura o número da rota (ID)
+                $id = $matches[1];
 
-              if(!is_callable($router)) // se a uri não for uma função;
+                // Procura o usuário pelo ID 
+                $lista = $produto->exibirProdutoId((int)$id);
+
+                if (!empty($lista)) 
+                {
+                  $produto->exibirProdutoId((int)$id);
+                } 
+            
+            } 
+              else 
               {
-                echo json_encode(["error" => "A rota {$router} não e uma função"]);
-                die;
+                 // Se a rota não existir
+                http_response_code(404);
+                echo json_encode(["erro" => "Rota não encontrada"]);
               }
-
-              $router(); // executar o método da uri
                  
       } 
         catch (PDOException $e) 
