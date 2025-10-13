@@ -11,37 +11,52 @@ use PDOException;
 
 class Router
 {
+
     public static function execute()
     {
       try 
       {
          header('Content-Type: application/json; charset=utf-8'); // configurando a página para retornar json
 
-          $produto = new ProdutoController();
+          $method = $_SERVER['REQUEST_METHOD']; // pegando o método da requisição
 
-          // Captura a URL requisitada
-          $request = $_SERVER['REQUEST_URI'];
-
-          // Remove parâmetros de query string (ex: ?teste=1)
-          $request = parse_url($request, PHP_URL_PATH);
-
-          // Roteamento simples
-          if ($request === "/produtos") 
+          if($method != 'GET' && $method != 'POST') // verificando o método
           {
-            // Retorna todos os usuários 
-            $produto->exibirProdutos();
+              echo json_encode(["error" => "Método não permitido"]);
+              die;
+          }
+
+          $produtoController = new ProdutoController(); // criando a instacia de produto
+         
+          $request = $_SERVER['REQUEST_URI']; // Captura a URL requisitada
+
+          $request = parse_url($request, PHP_URL_PATH);// Remove parâmetros de query string (ex: ?teste=1)
+
+        
+          if ($request === "/produtos") // Roteamento simples
+          {
+           
+            if($method === 'GET')
+            {
+              $produtoController->exibirProdutos();  // Retorna todos os produtos 
+            }
+              elseif($method === 'POST')
+              {
+                $produtoController->insercaoProdutos(); // Inseri um produto novo
+              }
+
           } 
             elseif (preg_match("/\/produtos\/(\d+)/", $request, $matches)) 
             {
-                // Captura o número da rota (ID)
-                $id = $matches[1];
+                
+                $id = $matches[1]; // Captura o número da rota (ID)
 
-                // Procura o usuário pelo ID 
-                $lista = $produto->exibirProdutoId((int)$id);
+                
+                $produto = $produtoController->exibirProdutoId((int)$id); // Procura o usuário pelo ID 
 
-                if (!empty($lista)) 
+                if (!empty($produto)) // Se não for vazio retornar os dados  
                 {
-                  $produto->exibirProdutoId((int)$id);
+                  $produtoController->exibirProdutoId((int)$id);
                 } 
             
             } 
