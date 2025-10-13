@@ -28,7 +28,7 @@ class Router
 
           $produtoController = new ProdutoController(); // criando a instacia de produto
          
-          $request = $_SERVER['REQUEST_URI']; // Captura a URL requisitada
+          $request = $_SERVER['REQUEST_URI']; // Captura a URL
 
           $request = parse_url($request, PHP_URL_PATH);// Remove parâmetros de query string (ex: ?teste=1)
 
@@ -38,11 +38,11 @@ class Router
            
             if($method === 'GET')
             {
-              $produtoController->exibirProdutos();  // Retorna todos os produtos 
+              $produtoController->exibirProdutos();  // Retorna a resposta 
             }
               elseif($method === 'POST')
               {
-                $produtoController->insercaoProdutos(); // Inseri um produto novo
+                $produtoController->insercaoProdutos(); // Retorna a resposta
               }
 
           } 
@@ -51,13 +51,17 @@ class Router
                 
                 $id = $matches[1]; // Captura o número da rota (ID)
 
-                
-                $produto = $produtoController->exibirProdutoId((int)$id); // Procura o usuário pelo ID 
-
-                if (!empty($produto)) // Se não for vazio retornar os dados  
+                if($method === 'GET')
                 {
-                  $produtoController->exibirProdutoId((int)$id);
-                } 
+                  $produtoController->exibirProdutoId((int)$id); // Retorna a resposta
+                }
+
+                if($method === 'POST') // se for igual post endpoint não sera permitido 
+                {
+                  http_response_code(405);
+                  echo json_encode(["erro" => "Método não permitido para essa ação"]);
+                  die;
+                }
             
             } 
               else 
