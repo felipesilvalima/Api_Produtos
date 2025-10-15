@@ -69,7 +69,6 @@ class ProdutoModel
             $this->unidade_medida = $produto['unidade_medida'];
             $this->categoria_id = $produto['categoria_id'];
             $this->fornecedor_id = $produto['fornecedor_id'];
-            $this->usuario_id = $produto['usuario_id'];
 
             $sql = "INSERT INTO 
             produtos(produto,descricao,preco,quantidade_max,quantidade_min,unidade_medida,categoria_id,fornecedor_id,usuario_id)
@@ -83,7 +82,7 @@ class ProdutoModel
             $stm->bindParam(':unidade_medida', $this->unidade_medida, PDO::PARAM_STR); // passando o parâmetro
             $stm->bindParam(':categoria_id', $this->categoria_id, PDO::PARAM_INT); // passando o parâmetro
             $stm->bindParam(':fornecedor_id', $this->fornecedor_id, PDO::PARAM_INT); // passando o parâmetro
-            $stm->bindParam(':usuario_id', $this->usuario_id, PDO::PARAM_INT); // passando o parâmetro
+            $stm->bindValue(':usuario_id', 2, PDO::PARAM_INT); // passando o parâmetro
             $stm->execute(); // Executa a query
 
             if($stm)

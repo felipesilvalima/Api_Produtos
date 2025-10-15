@@ -55,13 +55,21 @@ class Router
                 {
                   $produtoController->exibirProdutoId((int)$id); // Retorna a resposta
                 }
+                  elseif($method === 'PUT')
+                  {
+                    
+                  }
+                    elseif($method === 'DELETE')
+                    {
+                  
+                    }
 
-                if($method === 'POST') // se for igual post endpoint não sera permitido 
-                {
-                  http_response_code(405);
-                  echo json_encode(["erro" => "Método não permitido para essa ação"]);
-                  die;
-                }
+                      if($method === 'POST') // se for igual post endpoint não sera permitido 
+                      {
+                        http_response_code(405);
+                        echo json_encode(["erro" => "Método não permitido para essa ação"]);
+                        die;
+                      }
             
             } 
               else 
