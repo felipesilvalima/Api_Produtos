@@ -103,7 +103,7 @@ class ProdutoController
 
                 $respose = ProdutoValidation::validationAllData($Produtos);
 
-                if($respose != null) // validação de campos
+                if($respose != null) // validação de dados
                 {
                     
                     http_response_code(400);
@@ -114,17 +114,7 @@ class ProdutoController
                     die;
                 }
 
-                    if(!ProdutoModel::duplicationProduto($Produtos['produto'])) // verificando produto duplicado
-                    {
-                        http_response_code(409);
-                        echo json_encode([
-                            "status" => false,
-                            "mensagem" => "Esse produto já foi inserido!!"
-                        ]);
-                        die;
-                    }
-
-                        $inserir = $ProdutoModel->inserirProdutos($Produtos); // chamar o método para inserir o produto novo
+                    $inserir = $ProdutoModel->inserirProdutos($Produtos); // chamar o método para inserir o produto novo
 
                         if($inserir) // inserido com sucesso
                         {

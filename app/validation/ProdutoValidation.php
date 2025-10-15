@@ -2,6 +2,8 @@
 
 namespace app\validation;
 
+use app\model\ProdutoModel;
+
 class ProdutoValidation
 {
 
@@ -13,7 +15,7 @@ class ProdutoValidation
             !empty(self::Produto($produto['produto'])) ||
             !empty(self::preco($produto['preco'])) || 
             !empty(self::quantidade($produto['quantidade'])) || 
-            !empty(self::quantidade_min($produto['quantidade_min'])) ||
+            !empty(self::quantidade_min($produto)) ||
             !empty(self::categoria_id($produto['categoria_id'])) ||
             !empty(self::fornecedor_id($produto['fornecedor_id']))  || 
             !empty(self::descricao($produto['descricao']))   
@@ -22,7 +24,7 @@ class ProdutoValidation
             $messages[] = self::Produto($produto['produto']);
             $messages[] = self::preco($produto['preco']);
             $messages[] = self::quantidade($produto['quantidade']);
-            $messages[] = self::quantidade_min($produto['quantidade_min']);
+            $messages[] = self::quantidade_min($produto);
             $messages[] = self::categoria_id($produto['categoria_id']);
             $messages[] = self::fornecedor_id($produto['fornecedor_id']);
             $messages[] = self::descricao($produto['descricao']);
@@ -48,6 +50,10 @@ class ProdutoValidation
             {
                 $messages[] = "O campo produto deve ter até 30 caracteres";
             }
+                elseif(!ProdutoModel::duplicationProduto($produto))
+                {
+                    $messages[] = "Esse produto já foi inserido!!";
+                }
         
        return $messages;
     }
@@ -60,10 +66,14 @@ class ProdutoValidation
         {
             $messages[] = "Precisar prencheer o campo Preço!!";
         }
-            elseif(!is_numeric($preco))
+            elseif($preco <= 0)
             {
-                $messages[] = "O campo Preço precisar ser do tipo númerico";
+                $messages[] = "O campo Preço tem que ser maior que 0"; 
             }
+                elseif(!preg_match('/^\d{1,3}(?:\.\d{3})*,\d{2}$/', $preco))
+                {   
+                    $messages[] = "O campo Preço tem que ser tipo númerico no formato EX:(00,00, 0,00, 0.000,00)";
+                }
 
        return $messages;
     }
@@ -80,14 +90,21 @@ class ProdutoValidation
             {
                 $messages[] = "O campo Quantidade precisar ser do tipo númerico";
             }
+                elseif($quantidade <= 0)
+                {
+                  $messages[] = "O campo Quantidade tem que ser maior que 0"; 
+                }
 
        return $messages;
 
     }
 
-    public static function quantidade_min($quantidade_min)
+    public static function quantidade_min(array $produto)
     {
         $messages = [];
+
+        $quantidade_min = $produto['quantidade_min'];
+        $quantidade = $produto['quantidade'];
         
         if(empty($quantidade_min))
         {
@@ -97,6 +114,14 @@ class ProdutoValidation
             {
                 $messages[] = "O campo Quantidade minima precisar ser do tipo númerico";
             }
+                elseif($quantidade_min >=  $quantidade)
+                {
+                  $messages[] = "O campo Quantidade minima tem que ser menor que quantidade"; 
+                }
+                    elseif($quantidade_min <= 0)
+                    {
+                        $messages[] = "O campo Quantidade minima tem que ser maior que 0"; 
+                    }
 
        return $messages;
 
@@ -131,6 +156,10 @@ class ProdutoValidation
             {
                 $messages[] = "O campo categoria precisar ser do tipo númerico";
             }
+                    elseif($categoria_id <= 0)
+                    {
+                        $messages[] = "O campo Categoria tem que ser maior que 0"; 
+                    }
 
        return $messages;
 
@@ -148,6 +177,10 @@ class ProdutoValidation
             {
                 $messages[] = "O campo fornecedor precisar ser do tipo númerico";
             }
+                    elseif($fornecedor_id <= 0)
+                    {
+                        $messages[] = "O campo Fornecedor tem que ser maior que 0"; 
+                    }
 
        return $messages;
      
