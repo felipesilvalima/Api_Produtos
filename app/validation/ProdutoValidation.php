@@ -50,7 +50,7 @@ class ProdutoValidation
             {
                 $messages[] = "O campo produto deve ter até 30 caracteres";
             }
-                elseif(!ProdutoModel::duplicationProduto($produto))
+                elseif(!ProdutoModel::isExistProduto($produto))
                 {
                     $messages[] = "Esse produto já foi inserido!!";
                 }

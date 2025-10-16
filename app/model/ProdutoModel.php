@@ -100,7 +100,7 @@ class ProdutoModel
     }
 
 
-    public static function duplicationProduto(string $produto)
+    public static function isExistProduto(string $produto)
     {
         try 
         {
@@ -121,6 +121,16 @@ class ProdutoModel
             {
                 throw new Exception("error" . $e->getMessage()); // Lança exceção em caso de erro
             }
-    } 
+    }
+
+    public static function isExistCategoria(int $categoria_id)
+    {
+
+    }
+
+    public static function isExistFornecedor(int $fornecedor_id)
+    {
+        
+    }
 
 }
