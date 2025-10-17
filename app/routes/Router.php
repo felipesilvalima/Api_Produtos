@@ -42,7 +42,7 @@ class Router
             }
               elseif($method === 'POST')
               {
-                $produtoController->insercaoProdutos(); // Retorna a resposta
+                $produtoController->CadastrarProdutos(); // Retorna a resposta
               }
 
           } 
@@ -57,7 +57,7 @@ class Router
                 }
                   elseif($method === 'PUT')
                   {
-                    
+                      $produtoController->UpdateProdutos((int)$id);
                   }
                     elseif($method === 'DELETE')
                     {

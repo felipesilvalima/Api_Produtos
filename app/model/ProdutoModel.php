@@ -34,7 +34,8 @@ class ProdutoModel
         } 
             catch (PDOException $e) 
             {
-                throw new Exception("error" . $e->getMessage()); // Lança exceção em caso de erro
+                http_response_code(500);
+                echo json_encode(["error" => $e->getMessage()]); // Lança exceção em caso de erro
             }
     }
 
@@ -53,22 +54,23 @@ class ProdutoModel
         } 
             catch (PDOException $e) 
             {
-                throw new Exception("error" . $e->getMessage()); // Lança exceção em caso de erro
+                http_response_code(500);
+                echo json_encode(["error" => $e->getMessage()]); // Lança exceção em caso de erro
             }
     }
 
-    public function inserirProdutos(array $produto)
+    public function inserirProdutos(array $request)
     {
         try 
         {
-            $this->produto = $produto['produto'];
-            $this->descricao = $produto['descricao'];
-            $this->preco = $produto['preco'];
-            $this->quantidade = $produto['quantidade'];
-            $this->quantidade_min = $produto['quantidade_min'];
-            $this->unidade_medida = $produto['unidade_medida'];
-            $this->categoria_id = $produto['categoria_id'];
-            $this->fornecedor_id = $produto['fornecedor_id'];
+            $this->produto = $request['produto'];
+            $this->descricao = $request['descricao'];
+            $this->preco = $request['preco'];
+            $this->quantidade = $request['quantidade'];
+            $this->quantidade_min = $request['quantidade_min'];
+            $this->unidade_medida = $request['unidade_medida'];
+            $this->categoria_id = $request['categoria_id'];
+            $this->fornecedor_id = $request['fornecedor_id'];
 
             $sql = "INSERT INTO 
             produtos(produto,descricao,preco,quantidade_max,quantidade_min,unidade_medida,categoria_id,fornecedor_id,usuario_id)
@@ -95,7 +97,52 @@ class ProdutoModel
         } 
             catch (PDOException $e) 
             {
-                throw new Exception("error" . $e->getMessage()); // Lança exceção em caso de erro
+                http_response_code(500);
+                echo json_encode(["error" => $e->getMessage()]); // Lança exceção em caso de erro
+            }
+    }
+
+    public function UpdateProdutos(array $request, int $id)
+    {
+         try 
+        {
+            $this->id = $id;
+            $this->produto = $request['produto'];
+            $this->descricao = $request['descricao'];
+            $this->preco = $request['preco'];
+            $this->quantidade = $request['quantidade'];
+            $this->quantidade_min = $request['quantidade_min'];
+            $this->unidade_medida = $request['unidade_medida'];
+            $this->categoria_id = $request['categoria_id'];
+            $this->fornecedor_id = $request['fornecedor_id'];
+
+            $sql = "UPDATE produtos
+            SET(produto=:produto, descricao=:descricao, preco=:preco, quantidade_max=:quantidade, quantidade_min=:quantidade_min, unidade_medida=:unidade_medida, categoria_id=:categoria_id, fornecedor_id=:fornecedor_id, usuario_id=:usuario_id) WHERE id = :id"; // SQL para listar todos os produtos
+            $stm = Conexao::Conexao()->prepare($sql);  // Prepara a query
+            $stm->bindParam(':id', $this->id, PDO::PARAM_INT); // passando o parâmetro
+            $stm->bindParam(':produto', $this->produto, PDO::PARAM_STR); // passando o parâmetro
+            $stm->bindParam(':descricao', $this->descricao, PDO::PARAM_STR); // passando o parâmetro
+            $stm->bindParam(':preco', $this->preco, PDO::PARAM_STR); // passando o parâmetro
+            $stm->bindParam(':quantidade', $this->quantidade, PDO::PARAM_INT); // passando o parâmetro
+            $stm->bindParam(':quantidade_min', $this->quantidade_min, PDO::PARAM_INT); // passando o parâmetro
+            $stm->bindParam(':unidade_medida', $this->unidade_medida, PDO::PARAM_STR); // passando o parâmetro
+            $stm->bindParam(':categoria_id', $this->categoria_id, PDO::PARAM_INT); // passando o parâmetro
+            $stm->bindParam(':fornecedor_id', $this->fornecedor_id, PDO::PARAM_INT); // passando o parâmetro
+            $stm->bindValue(':usuario_id', 2, PDO::PARAM_INT); // passando o parâmetro
+            $stm->execute(); // Executa a query
+
+            if($stm)
+            {
+                return true;
+            }
+
+            return false;
+        
+        } 
+            catch (PDOException $e) 
+            {
+                http_response_code(500);
+                echo json_encode(["error" => $e->getMessage()]); // Lança exceção em caso de erro
             }
     }
 
@@ -119,40 +166,60 @@ class ProdutoModel
         } 
             catch (PDOException $e) 
             {
-                throw new Exception("error" . $e->getMessage()); // Lança exceção em caso de erro
+                http_response_code(500);
+                echo json_encode(["error" => $e->getMessage()]); // Lança exceção em caso de erro
             }
     }
 
     public static function isExistCategoria(int $categoria_id)
     {
-        $sql = "SELECT id FROM categoria WHERE NOT EXISTS(SELECT id FROM categoria WHERE id = :categoria_id)";
-
-        $stm = Conexao::Conexao()->prepare($sql);
-        $stm->bindParam(':categoria_id', $categoria_id, PDO::PARAM_INT);
-        $stm->execute();
-
-        if($stm->rowCount() > 0)
+        try
         {
-            return false;
-        }
 
-        return true;
+            $sql = "SELECT id FROM categoria WHERE NOT EXISTS(SELECT id FROM categoria WHERE id = :categoria_id)";
+    
+            $stm = Conexao::Conexao()->prepare($sql);
+            $stm->bindParam(':categoria_id', $categoria_id, PDO::PARAM_INT);
+            $stm->execute();
+    
+            if($stm->rowCount() > 0)
+            {
+                return false;
+            }
+    
+            return true;
+        } 
+            catch(PDOException $e)
+            {
+                http_response_code(500);
+                echo json_encode(["error" => $e->getMessage()]);
+            }
+        
 
     }
 
     public static function isExistFornecedor(int $fornecedor_id)
     {
-        $sql = "SELECT id FROM fornecedor WHERE NOT EXISTS(SELECT id FROM fornecedor WHERE id = :fornecedor_id)";
-        $stm = Conexao::Conexao()->prepare($sql);
-        $stm->bindParam(':fornecedor_id', $fornecedor_id, PDO::PARAM_INT);
-        $stm->execute();
-
-        if($stm->rowCount() > 0)
+        try
         {
-            return false;
-        }
 
-        return true;
+            $sql = "SELECT id FROM fornecedor WHERE NOT EXISTS(SELECT id FROM fornecedor WHERE id = :fornecedor_id)";
+            $stm = Conexao::Conexao()->prepare($sql);
+            $stm->bindParam(':fornecedor_id', $fornecedor_id, PDO::PARAM_INT);
+            $stm->execute();
+    
+            if($stm->rowCount() > 0)
+            {
+                return false;
+            }
+    
+            return true;
+        }
+            catch(PDOException $e)
+            {
+                http_response_code(500);
+                echo json_encode(["error" => $e->getMessage()]);
+            }
     }
 
 }
