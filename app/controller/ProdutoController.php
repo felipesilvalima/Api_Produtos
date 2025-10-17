@@ -102,15 +102,11 @@ class ProdutoController
             ];     
 
                 $respose = ProdutoValidation::validationAllData($Produtos);
-
+                
                 if($respose != null) // validação de dados
-                {
-                    
+                {        
                     http_response_code(400);
-                    echo json_encode([
-                        "status" => false,
-                        "mensagem" => $respose
-                    ]);
+                    echo json_encode(["mensagem" => $respose]);
                     die;
                 }
 

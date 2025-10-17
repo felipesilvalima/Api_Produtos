@@ -125,12 +125,34 @@ class ProdutoModel
 
     public static function isExistCategoria(int $categoria_id)
     {
+        $sql = "SELECT id FROM categoria WHERE NOT EXISTS(SELECT id FROM categoria WHERE id = :categoria_id)";
+
+        $stm = Conexao::Conexao()->prepare($sql);
+        $stm->bindParam(':categoria_id', $categoria_id, PDO::PARAM_INT);
+        $stm->execute();
+
+        if($stm->rowCount() > 0)
+        {
+            return false;
+        }
+
+        return true;
 
     }
 
     public static function isExistFornecedor(int $fornecedor_id)
     {
-        
+        $sql = "SELECT id FROM fornecedor WHERE NOT EXISTS(SELECT id FROM fornecedor WHERE id = :fornecedor_id)";
+        $stm = Conexao::Conexao()->prepare($sql);
+        $stm->bindParam(':fornecedor_id', $fornecedor_id, PDO::PARAM_INT);
+        $stm->execute();
+
+        if($stm->rowCount() > 0)
+        {
+            return false;
+        }
+
+        return true;
     }
 
 }
