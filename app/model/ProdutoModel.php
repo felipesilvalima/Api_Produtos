@@ -34,8 +34,7 @@ class ProdutoModel
         } 
             catch (PDOException $e) 
             {
-                http_response_code(500);
-                echo json_encode(["error" => $e->getMessage()]); // Lança exceção em caso de erro
+               throw new Exception("error no banco de dados" . $e->getMessage()); // Lança exceção em caso de erro
             }
     }
 
@@ -54,8 +53,7 @@ class ProdutoModel
         } 
             catch (PDOException $e) 
             {
-                http_response_code(500);
-                echo json_encode(["error" => $e->getMessage()]); // Lança exceção em caso de erro
+                throw new Exception("error no banco de dados" . $e->getMessage()); // Lança exceção em caso de erro
             }
     }
 
@@ -97,8 +95,7 @@ class ProdutoModel
         } 
             catch (PDOException $e) 
             {
-                http_response_code(500);
-                echo json_encode(["error" => $e->getMessage()]); // Lança exceção em caso de erro
+               throw new Exception("error no banco de dados" . $e->getMessage()); // Lança exceção em caso de erro
             }
     }
 
@@ -117,7 +114,7 @@ class ProdutoModel
             $this->fornecedor_id = $request['fornecedor_id'];
 
             $sql = "UPDATE produtos
-            SET(produto=:produto, descricao=:descricao, preco=:preco, quantidade_max=:quantidade, quantidade_min=:quantidade_min, unidade_medida=:unidade_medida, categoria_id=:categoria_id, fornecedor_id=:fornecedor_id, usuario_id=:usuario_id) WHERE id = :id"; // SQL para listar todos os produtos
+            SET produto=:produto, descricao=:descricao, preco=:preco, quantidade_max=:quantidade, quantidade_min=:quantidade_min, unidade_medida=:unidade_medida, categoria_id=:categoria_id, fornecedor_id=:fornecedor_id, usuario_id=:usuario_id WHERE id = :id"; // SQL para listar todos os produtos
             $stm = Conexao::Conexao()->prepare($sql);  // Prepara a query
             $stm->bindParam(':id', $this->id, PDO::PARAM_INT); // passando o parâmetro
             $stm->bindParam(':produto', $this->produto, PDO::PARAM_STR); // passando o parâmetro
@@ -141,8 +138,7 @@ class ProdutoModel
         } 
             catch (PDOException $e) 
             {
-                http_response_code(500);
-                echo json_encode(["error" => $e->getMessage()]); // Lança exceção em caso de erro
+               throw new Exception("error no banco de dados" . $e->getMessage()); // Lança exceção em caso de erro
             }
     }
 
@@ -166,8 +162,7 @@ class ProdutoModel
         } 
             catch (PDOException $e) 
             {
-                http_response_code(500);
-                echo json_encode(["error" => $e->getMessage()]); // Lança exceção em caso de erro
+                throw new Exception("error no banco de dados" . $e->getMessage()); // Lança exceção em caso de erro
             }
     }
 
@@ -191,21 +186,44 @@ class ProdutoModel
         } 
             catch(PDOException $e)
             {
-                http_response_code(500);
-                echo json_encode(["error" => $e->getMessage()]);
+                throw new Exception("error no banco de dados" . $e->getMessage());
             }
         
 
     }
-
+    
     public static function isExistFornecedor(int $fornecedor_id)
     {
         try
         {
-
+            
             $sql = "SELECT id FROM fornecedor WHERE NOT EXISTS(SELECT id FROM fornecedor WHERE id = :fornecedor_id)";
             $stm = Conexao::Conexao()->prepare($sql);
             $stm->bindParam(':fornecedor_id', $fornecedor_id, PDO::PARAM_INT);
+            $stm->execute();
+            
+                if($stm->rowCount() > 0)
+                {
+                    return false;
+                }
+                
+                return true;
+        }
+            catch(PDOException $e)
+            {
+               throw new Exception("error no banco de dados" . $e->getMessage());
+            }
+    }
+        
+    public static function isExistID(int $id)
+    {
+        try
+        {
+
+            $sql = "SELECT id FROM produtos WHERE NOT EXISTS(SELECT id FROM produtos WHERE id = :id)";
+    
+            $stm = Conexao::Conexao()->prepare($sql);
+            $stm->bindParam(':id', $id, PDO::PARAM_INT);
             $stm->execute();
     
             if($stm->rowCount() > 0)
@@ -214,12 +232,12 @@ class ProdutoModel
             }
     
             return true;
-        }
+        } 
             catch(PDOException $e)
             {
-                http_response_code(500);
-                echo json_encode(["error" => $e->getMessage()]);
+                throw new Exception("error no banco de dados" . $e->getMessage());
             }
-    }
+        
 
+    }
 }

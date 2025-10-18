@@ -7,18 +7,18 @@ use app\model\ProdutoModel;
 class ProdutoValidation
 {
 
-    public static function validationAllData(array $produto)
+    public static function validationAllData(array $request)
     {
         $messages = [];
-        
-            $messages[] = self::Produto($produto['produto']); // recebendo o retorno das menssagens
-            $messages[] = self::preco($produto['preco']);
-            $messages[] = self::quantidade($produto['quantidade']);
-            $messages[] = self::quantidade_min($produto);
-            $messages[] = self::categoria_id($produto['categoria_id']);
-            $messages[] = self::fornecedor_id($produto['fornecedor_id']);
-            $messages[] = self::descricao($produto['descricao']);
-            $messages[] = self::unidade_medida($produto['unidade_medida']);
+          
+            $messages[] = self::Produto($request['produto']); // recebendo o retorno das menssagens
+            $messages[] = self::preco($request['preco']);
+            $messages[] = self::quantidade($request['quantidade']);
+            $messages[] = self::quantidade_min($request);
+            $messages[] = self::categoria_id($request['categoria_id']);
+            $messages[] = self::fornecedor_id($request['fornecedor_id']);
+            $messages[] = self::descricao($request['descricao']);
+            $messages[] = self::unidade_medida($request['unidade_medida']);
 
             $responses = [];
 
@@ -132,10 +132,14 @@ class ProdutoValidation
     public static function descricao($descricao)
     {
 
-        if(strlen($descricao) > 100)
+        if(!empty($descricao) && strlen($descricao) > 100)
         {
             $messages['descricao'] = "O campo descricação deve ter até 100 caracteres"; // validação de tamanho 
         }
+            elseif(!empty($descricao)  && is_numeric($descricao))
+            {
+                $messages['descricao'] = "A descrição tem que ser um texto"; // validação de tipo 
+            }
         
             return !empty($messages) && isset($messages) ? $messages: null; // se não for vazio e existir retornar menssagem se não null 
     }

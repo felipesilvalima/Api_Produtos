@@ -20,7 +20,7 @@ class Router
 
           $method = $_SERVER['REQUEST_METHOD']; // pegando o método da requisição
 
-          if($method != 'GET' && $method != 'POST') // verificando o método
+          if($method != 'GET' && $method != 'POST' && $method != 'PUT') // verificando o método
           {
               echo json_encode(["error" => "Método não permitido"]);
               die;
@@ -35,21 +35,29 @@ class Router
         
           if ($request === "/produtos") // Roteamento simples
           {
-           
-            if($method === 'GET')
+
+            if($method === 'PUT' || $method === 'DELETE') // se for igual post endpoint não sera permitido 
             {
-              $produtoController->exibirProdutos();  // Retorna a resposta 
+              http_response_code(405);
+              echo json_encode(["erro" => "Método não permitido para essa ação"]);
+              die;
             }
-              elseif($method === 'POST')
+           
+              if($method === 'GET')
               {
-                $produtoController->CadastrarProdutos(); // Retorna a resposta
+                $produtoController->exibirProdutos();  // Retorna a resposta 
               }
+                elseif($method === 'POST')
+                {
+                  $produtoController->CadastrarProdutos(); // Retorna a resposta
+                }
 
           } 
             elseif (preg_match("/\/produtos\/(\d+)/", $request, $matches)) 
             {
                 
                 $id = $matches[1]; // Captura o número da rota (ID)
+                
 
                 if($method === 'GET')
                 {
@@ -61,7 +69,7 @@ class Router
                   }
                     elseif($method === 'DELETE')
                     {
-                  
+                        $produtoController->deleteProdutos((int)$id);
                     }
 
                       if($method === 'POST') // se for igual post endpoint não sera permitido 
