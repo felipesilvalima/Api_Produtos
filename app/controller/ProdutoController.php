@@ -11,10 +11,12 @@ use PDOException;
 class ProdutoController
 {
     private $ProdutoModel;
+    
     public function __construct()
     {
         $this->ProdutoModel = new ProdutoModel();
     }
+
     public function exibirProdutos()
     {
         try 

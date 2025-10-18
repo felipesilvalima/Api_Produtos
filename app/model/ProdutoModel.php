@@ -2,6 +2,7 @@
 
 namespace app\model;
 
+use app\model\Conexao;
 use Exception;
 use PDO;
 use PDOException;
@@ -19,13 +20,19 @@ class ProdutoModel
     private $fornecedor_id;
     private $usuario_id;
     
+    private static $conexao;
+
+    public function __construct()
+    {
+        self::$conexao = new Conexao();
+    }
 
     public function exibirTodosProdutos()
     {
         try 
         {
             $sql = "SELECT * FROM Produtos ORDER BY id"; // SQL para listar todos os produtos
-            $stm = Conexao::Conexao()->prepare($sql);  // Prepara a query
+            $stm = self::$conexao->Conexao()->prepare($sql);  // Prepara a query
             $stm->execute();                            // Executa a query
 
             $listarProdutos = $stm->fetchAll(PDO::FETCH_OBJ); // Pega todos os resultados como objetos
@@ -43,7 +50,7 @@ class ProdutoModel
         try 
         {
             $sql = "SELECT * FROM Produtos WHERE id = :id"; // SQL para listar todos os produtos
-            $stm = Conexao::Conexao()->prepare($sql);  // Prepara a query
+            $stm = self::$conexao->Conexao()->prepare($sql);  // Prepara a query
             $stm->bindParam(':id', $id, PDO::PARAM_INT); // passando o parâmetro
             $stm->execute(); // Executa a query
 
@@ -73,7 +80,7 @@ class ProdutoModel
             $sql = "INSERT INTO 
             produtos(produto,descricao,preco,quantidade_max,quantidade_min,unidade_medida,categoria_id,fornecedor_id,usuario_id)
             VALUES(:produto, :descricao, :preco, :quantidade, :quantidade_min, :unidade_medida, :categoria_id, :fornecedor_id, :usuario_id)"; // SQL para listar todos os produtos
-            $stm = Conexao::Conexao()->prepare($sql);  // Prepara a query
+            $stm = self::$conexao->Conexao()->prepare($sql);  // Prepara a query
             $stm->bindParam(':produto', $this->produto, PDO::PARAM_STR); // passando o parâmetro
             $stm->bindParam(':descricao', $this->descricao, PDO::PARAM_STR); // passando o parâmetro
             $stm->bindParam(':preco', $this->preco, PDO::PARAM_STR); // passando o parâmetro
@@ -115,7 +122,7 @@ class ProdutoModel
 
             $sql = "UPDATE produtos
             SET produto=:produto, descricao=:descricao, preco=:preco, quantidade_max=:quantidade, quantidade_min=:quantidade_min, unidade_medida=:unidade_medida, categoria_id=:categoria_id, fornecedor_id=:fornecedor_id, usuario_id=:usuario_id WHERE id = :id"; // SQL para listar todos os produtos
-            $stm = Conexao::Conexao()->prepare($sql);  // Prepara a query
+            $stm = self::$conexao->Conexao()->prepare($sql);  // Prepara a query
             $stm->bindParam(':id', $this->id, PDO::PARAM_INT); // passando o parâmetro
             $stm->bindParam(':produto', $this->produto, PDO::PARAM_STR); // passando o parâmetro
             $stm->bindParam(':descricao', $this->descricao, PDO::PARAM_STR); // passando o parâmetro
@@ -148,7 +155,7 @@ class ProdutoModel
         try 
         {
             $sql = "SELECT * FROM Produtos WHERE produto = :produto"; // SQL para listar todos os produtos
-            $stm = Conexao::Conexao()->prepare($sql);  // Prepara a query
+            $stm = self::$conexao->Conexao()->prepare($sql);  // Prepara a query
             $stm->bindParam(':produto', $produto, PDO::PARAM_STR); // passando o parâmetro
             $stm->execute(); // Executa a query
 
@@ -173,7 +180,7 @@ class ProdutoModel
 
             $sql = "SELECT id FROM categoria WHERE NOT EXISTS(SELECT id FROM categoria WHERE id = :categoria_id)";
     
-            $stm = Conexao::Conexao()->prepare($sql);
+            $stm = self::$conexao->Conexao()->prepare($sql);
             $stm->bindParam(':categoria_id', $categoria_id, PDO::PARAM_INT);
             $stm->execute();
     
@@ -198,7 +205,7 @@ class ProdutoModel
         {
             
             $sql = "SELECT id FROM fornecedor WHERE NOT EXISTS(SELECT id FROM fornecedor WHERE id = :fornecedor_id)";
-            $stm = Conexao::Conexao()->prepare($sql);
+            $stm = self::$conexao->Conexao()->prepare($sql);
             $stm->bindParam(':fornecedor_id', $fornecedor_id, PDO::PARAM_INT);
             $stm->execute();
             
@@ -222,7 +229,7 @@ class ProdutoModel
 
             $sql = "SELECT id FROM produtos WHERE NOT EXISTS(SELECT id FROM produtos WHERE id = :id)";
     
-            $stm = Conexao::Conexao()->prepare($sql);
+            $stm = self::$conexao->Conexao()->prepare($sql);
             $stm->bindParam(':id', $id, PDO::PARAM_INT);
             $stm->execute();
     
