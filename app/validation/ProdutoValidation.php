@@ -11,14 +11,14 @@ class ProdutoValidation
     {
         $messages = [];
           
-            $messages[] = self::Produto($request['produto']); // recebendo o retorno das menssagens
-            $messages[] = self::preco($request['preco']);
-            $messages[] = self::quantidade($request['quantidade']);
-            $messages[] = self::quantidade_min($request);
-            $messages[] = self::categoria_id($request['categoria_id']);
-            $messages[] = self::fornecedor_id($request['fornecedor_id']);
-            $messages[] = self::descricao($request['descricao']);
-            $messages[] = self::unidade_medida($request['unidade_medida']);
+            $messages[] = self::Produto($request['produto'], $request['id'] ?? null); // recebendo o retorno das menssagens
+            $messages[] = self::preco($request['preco'] ?? 0);
+            $messages[] = self::quantidade($request['quantidade'] ?? 0);
+            $messages[] = self::quantidade_min($request ?? 0);
+            $messages[] = self::categoria_id($request['categoria_id'] ?? 0);
+            $messages[] = self::fornecedor_id($request['fornecedor_id'] ?? 0);
+            $messages[] = self::descricao($request['descricao'] ?? null);
+            $messages[] = self::unidade_medida($request['unidade_medida'] ?? null);
 
             $responses = [];
 
@@ -44,7 +44,7 @@ class ProdutoValidation
 
 
 
-    public static function Produto($produto)
+    public static function Produto($produto, $id)
     {
 
        if(empty($produto)) // validação de presença
@@ -55,7 +55,7 @@ class ProdutoValidation
             {
                 $messages['produto'] = "O campo produto deve ter até 30 caracteres";
             }
-                elseif(!ProdutoModel::isExistProduto($produto)) // validação de Existência
+                elseif(!ProdutoModel::isExistProduto($produto, (int)$id)) // validação de Existência
                 {
                     $messages['produto'] = "O nome do Produto já existe";
                 }

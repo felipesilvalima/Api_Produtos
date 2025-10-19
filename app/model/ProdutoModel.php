@@ -150,13 +150,14 @@ class ProdutoModel
     }
 
 
-    public static function isExistProduto(string $produto)
+    public static function isExistProduto(string $produto ,int $id)
     {
         try 
         {
-            $sql = "SELECT * FROM Produtos WHERE produto = :produto"; // SQL para listar todos os produtos
+            $sql = "SELECT produto FROM produtos WHERE produto = :produto AND id != :id"; // SQL para listar todos os produtos
             $stm = self::$conexao->Conexao()->prepare($sql);  // Prepara a query
             $stm->bindParam(':produto', $produto, PDO::PARAM_STR); // passando o parâmetro
+            $stm->bindParam(':id', $id, PDO::PARAM_INT); // passando o parâmetro
             $stm->execute(); // Executa a query
 
             if($stm->rowCount() > 0)

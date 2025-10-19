@@ -158,6 +158,11 @@ class ProdutoController
             {
 
                 $request = Methods::requestPut(); // pegando requisição PUT
+
+                if(is_array($request)) // se request e um array adiciono uma chave com valor do id
+                {
+                    $request["id"] = $id;
+                }
     
                 $isExistisID = $this->ProdutoModel->isExistID($id); // verificando se existir o recurso solicitado
                 
