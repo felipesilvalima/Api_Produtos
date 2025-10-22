@@ -159,11 +159,8 @@ class ProdutoController
 
                 $request = Methods::requestPut(); // pegando requisição PUT
 
-                if(is_array($request)) // se request e um array adiciono uma chave com valor do id
-                {
-                    $request["id"] = $id;
-                }
-    
+                is_array($request) ? $request = ["id" => $id] + $request : null; // se request e um array adiciono uma chave com valor do id em request
+                
                 $isExistisID = $this->ProdutoModel->isExistID($id); // verificando se existir o recurso solicitado
                 
                 if(!$isExistisID) // se não existir
@@ -171,36 +168,89 @@ class ProdutoController
                     echo json_encode(["error" => "Impossivel realizar atualização. O recurso solicitado não existe"]);
                     die;
                 }
-                
-                $response = ProdutoValidation::validationAllData($request); // validando os dados
-    
-                if($response != null) // se for diferente de null 
+
+                if($_SERVER['REQUEST_METHOD'] === 'PATCH') // se método for PATCH
                 {
-                    http_response_code(400);
-                    echo json_encode(["mensagem" => $response]);
-                    die;
-                }
-    
-                    $update = $this->ProdutoModel->UpdateProdutos($request, $id); // chamando o método para atualizar
-    
-                        if($update) // atualizado com sucesso
+                    
+                    $responses = ProdutoValidation::validationAllData($request); // validação do dados
+
+                    $chaveRequest = array_keys($request); // pegar chaves da requição
+                    
+
+                    foreach($chaveRequest as $chave)
+                    {
+                                
+                        if($chave != 'id' && isset($responses[$chave])) // se chave não for um id e se a resposta da validação existir
                         {
-                            http_response_code(200);
-                            echo json_encode([
-                                "status" => true,
-                                "mensagem" => "Produto Atualizado com sucesso",
-                                "data" => $request
-                            ]);
+                            $respostasDinamicas[$chave] = $responses[$chave]; // regras Dinamicas receber a resposta da validação
+                               
                         }
-                            else
+                    }
+
+
+                    if(!empty($respostasDinamicas)) // se as respostaDinamicas não forem vazias  
+                    {
+                        echo json_encode($respostasDinamicas); // return json de respostaDinamicas
+                        die;
+                    }
+
+                     $updateParcial = $this->ProdutoModel->UpdateParcialProdutos($request, $id); // atualizar o recurso parcialmente
+    
+                            if($updateParcial) // atualizado com sucesso
                             {
-                                http_response_code(500);
+                                http_response_code(200);
                                 echo json_encode([
-                                    "status" => false,
-                                    "mensagem" => "Erro ao Atualizar Produto"
-                        
+                                    "status" => true,
+                                    "mensagem" => "Produto Atualizado com sucesso",
+                                    "data" => $request
                                 ]);
                             }
+                                else
+                                {
+                                    http_response_code(500);
+                                    echo json_encode([
+                                        "status" => false,
+                                        "mensagem" => "Erro ao Atualizar Produto"
+                            
+                                    ]);
+                                }
+                    
+                       
+                }
+                    if($_SERVER['REQUEST_METHOD'] === 'PUT') // se método for  PUT
+                    {
+
+                        $response = ProdutoValidation::validationAllData($request); // validando os dados
+            
+                        if($response != null) // se for diferente de null 
+                        {
+                            http_response_code(400);
+                            echo json_encode(["mensagem" => $response]);
+                            die;
+                        }
+            
+                        $update = $this->ProdutoModel->UpdateProdutos($request, $id); // atualizar o recurso
+    
+                            if($update) // atualizado com sucesso
+                            {
+                                http_response_code(200);
+                                echo json_encode([
+                                    "status" => true,
+                                    "mensagem" => "Produto Atualizado com sucesso",
+                                    "data" => $request
+                                ]);
+                            }
+                                else
+                                {
+                                    http_response_code(500);
+                                    echo json_encode([
+                                        "status" => false,
+                                        "mensagem" => "Erro ao Atualizar Produto"
+                            
+                                    ]);
+                                }
+                    }
+                    
             }
 
         } 

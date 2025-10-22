@@ -149,6 +149,52 @@ class ProdutoModel
             }
     }
 
+     public function UpdateParcialProdutos(array $request, int $id)
+    {
+         try 
+        {
+            $values = $this->exibirProdutosId($id);
+
+
+            $this->id = $id;
+            $this->produto = isset($request['produto']) && !empty($request['produto']) ? $request['produto'] : $values->produto;
+            $this->descricao = isset($request['descricao']) && !empty($request['descricao']) ? $request['descricao'] : $values->descricao;
+            $this->preco =  isset($request['preco']) && !empty($request['preco']) ? $request['preco'] : $values->preco;
+            $this->quantidade = isset($request['quantidade']) && !empty($request['quantidade']) ? $request['quantidade'] : $values->quantidade_max;
+            $this->quantidade_min = isset($request['quantidade_min']) && !empty($request['quantidade_min']) ? $request['quantidade_min'] : $values->quantidade_min;
+            $this->unidade_medida =  isset($request['unidade_medida']) && !empty($request['unidade_medida']) ? $request['unidade_medida'] : $values->unidade_medida;
+            $this->categoria_id =  isset($request['categoria_id']) && !empty($request['categoria_id']) ? $request['categoria_id'] : $values->categoria_id;
+            $this->fornecedor_id = isset($request['categofornecedor_idria_id']) && !empty($request['fornecedor_id']) ? $request['fornecedor_id'] : $values->categoria_id;
+
+            $sql = "UPDATE produtos
+            SET produto=:produto, descricao=:descricao, preco=:preco, quantidade_max=:quantidade, quantidade_min=:quantidade_min, unidade_medida=:unidade_medida, categoria_id=:categoria_id, fornecedor_id=:fornecedor_id, usuario_id=:usuario_id WHERE id = :id"; // SQL para listar todos os produtos
+            $stm = self::$conexao->Conexao()->prepare($sql);  // Prepara a query
+            $stm->bindParam(':id', $this->id, PDO::PARAM_INT); // passando o parâmetro
+            $stm->bindParam(':produto', $this->produto, PDO::PARAM_STR); // passando o parâmetro
+            $stm->bindParam(':descricao', $this->descricao, PDO::PARAM_STR); // passando o parâmetro
+            $stm->bindParam(':preco', $this->preco, PDO::PARAM_STR); // passando o parâmetro
+            $stm->bindParam(':quantidade', $this->quantidade, PDO::PARAM_INT); // passando o parâmetro
+            $stm->bindParam(':quantidade_min', $this->quantidade_min, PDO::PARAM_INT); // passando o parâmetro
+            $stm->bindParam(':unidade_medida', $this->unidade_medida, PDO::PARAM_STR); // passando o parâmetro
+            $stm->bindParam(':categoria_id', $this->categoria_id, PDO::PARAM_INT); // passando o parâmetro
+            $stm->bindParam(':fornecedor_id', $this->fornecedor_id, PDO::PARAM_INT); // passando o parâmetro
+            $stm->bindValue(':usuario_id', 2, PDO::PARAM_INT); // passando o parâmetro
+            $stm->execute(); // Executa a query
+
+            if($stm)
+            {
+                return true;
+            }
+
+            return false;
+        
+        } 
+            catch (PDOException $e) 
+            {
+               throw new Exception("error no banco de dados" . $e->getMessage()); // Lança exceção em caso de erro
+            }
+    }
+
 
     public static function isExistProduto(string $produto ,int $id)
     {

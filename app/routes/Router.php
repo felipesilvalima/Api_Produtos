@@ -20,7 +20,7 @@ class Router
 
           $method = $_SERVER['REQUEST_METHOD']; // pegando o método da requisição
 
-          if($method != 'GET' && $method != 'POST' && $method != 'PUT') // verificando o método
+          if($method != 'GET' && $method != 'POST' && $method != 'PUT' && $method != 'PATCH' && $method != 'DELETE') // verificando o método
           {
               echo json_encode(["error" => "Método não permitido"]);
               die;
@@ -63,7 +63,7 @@ class Router
                 {
                   $produtoController->exibirProdutoId((int)$id); // Retorna a resposta
                 }
-                  elseif($method === 'PUT')
+                  elseif($method === 'PUT' || $method === 'PATCH')
                   {
                       $produtoController->UpdateProdutos((int)$id);
                   }
