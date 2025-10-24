@@ -22,7 +22,7 @@ class ProdutoValidation
 
             $responses = [];
 
-            $responses = array_filter($messages, fn($v) => !is_null($v));
+            $responses = array_filter($messages, fn($v) => !is_null($v)); // return apenas arrays que não são nulos
             
             if(!empty($responses)) // se as resposta não for vázia, retornar resposta, se não retornar null
             {

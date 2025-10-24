@@ -153,7 +153,7 @@ class ProdutoModel
     {
          try 
         {
-            $values = $this->exibirProdutosId($id);
+            $values = $this->exibirProdutosId($id); // pegar os dados do id
 
 
             $this->id = $id;
@@ -193,6 +193,21 @@ class ProdutoModel
             {
                throw new Exception("error no banco de dados" . $e->getMessage()); // Lança exceção em caso de erro
             }
+    }
+
+    public function deleteProduto(int $id)
+    {
+        $sql = "DELETE FROM produtos WHERE id = :id"; // SQL para remover uma listar de produto
+        $stm = self::$conexao->Conexao()->prepare($sql); // Prepara a query
+        $stm->bindParam(':id', $id, PDO::PARAM_INT); // passando o parâmetro
+        $stm->execute(); // Executa a query
+
+        if($stm)
+        {
+            return true;
+        }
+
+        return false;
     }
 
 

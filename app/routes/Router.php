@@ -16,7 +16,6 @@ class Router
     {
       try 
       {
-         header('Content-Type: application/json; charset=utf-8'); // configurando a página para retornar json
 
           $method = $_SERVER['REQUEST_METHOD']; // pegando o método da requisição
 
@@ -69,7 +68,7 @@ class Router
                   }
                     elseif($method === 'DELETE')
                     {
-                        $produtoController->deleteProdutos((int)$id);
+                        $produtoController->delete((int)$id);
                     }
 
                       if($method === 'POST') // se for igual post endpoint não sera permitido 

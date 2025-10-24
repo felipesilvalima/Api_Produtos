@@ -21,8 +21,7 @@ class ProdutoController
     {
         try 
         {
-           header('Content-Type: application/json; charset=utf-8'); // Define JSON como retorno
-    
+           
             $listaProdutos = $this->ProdutoModel->exibirTodosProdutos(); // Busca todos os produtos
 
                 if(empty($listaProdutos)) 
@@ -55,7 +54,6 @@ class ProdutoController
     {
         try 
         {
-           header('Content-Type: application/json; charset=utf-8'); // Define JSON como retorno
     
             $ProdutoId = $this->ProdutoModel->exibirProdutosId($id); // Busca por um produto
             
@@ -94,8 +92,7 @@ class ProdutoController
     {
         try 
         {
-           header('Content-Type: application/json; charset=utf-8'); // Define JSON como retorno
-    
+
             $request = [ // recebendo dados da requsição
               'produto' => $_POST['produto'] ?? null,
               'preco' => $_POST['preco'] ?? 0,
@@ -152,12 +149,13 @@ class ProdutoController
     {
         try 
         {
-            header('Content-Type: application/json; charset=UTF-8');// cabeçalho da resposta
 
             if(isset($id))
             {
 
                 $request = Methods::requestPut(); // pegando requisição PUT
+
+                $notData = $request;
 
                 is_array($request) ? $request = ["id" => $id] + $request : null; // se request e um array adiciono uma chave com valor do id em request
                 
@@ -165,12 +163,19 @@ class ProdutoController
                 
                 if(!$isExistisID) // se não existir
                 {
+                    http_response_code(404);
                     echo json_encode(["error" => "Impossivel realizar atualização. O recurso solicitado não existe"]);
                     die;
                 }
 
                 if($_SERVER['REQUEST_METHOD'] === 'PATCH') // se método for PATCH
                 {
+
+                    if(empty($notData)) // verificar se tem algum campo preenchdio 
+                    {
+                        echo json_encode(["error" => "Nenhum campo está preenchido"]);
+                        die;
+                    }
                     
                     $responses = ProdutoValidation::validationAllData($request); // validação do dados
 
@@ -261,21 +266,47 @@ class ProdutoController
             }
     }
 
-    public function deleteProdutos($id)
-    {
-        header('Content-Type: application/json; chasert=UTF-8');
-
+    public function delete(int $id)
+    { 
         try 
         {
+
+            $deleteDates = $this->ProdutoModel->exibirProdutosId($id); // dados que vão ser removidos
+
             if(isset($id))
             {
                 $isExistisID = $this->ProdutoModel->isExistID($id); // verificando se existir o recurso solicitado
                 
                 if(!$isExistisID) // se não existir
                 {
+                    http_response_code(404);
                     echo json_encode(["error" => "Impossivel realizar Remoção. O recurso solicitado não existe"]);
                     die;
                 }
+
+                $remover = $this->ProdutoModel->deleteProduto($id); // fazer a remoção dos dados
+
+                if($remover) // removido com sucesso
+                {
+                    http_response_code(200);
+                    echo json_encode([
+                        "status" => true,
+                        "mensagem" => "Produto removido com sucesso",
+                        "data" => $deleteDates
+                    ]);
+
+                    die;
+                }
+                    else // error ao remover produto
+                    {
+                        http_response_code(500);
+                         echo json_encode([
+                            "status" => false,
+                            "mensagem" => "Erro ao Remover Produto"   
+                        ]);
+
+                    }
+
 
             }
 
