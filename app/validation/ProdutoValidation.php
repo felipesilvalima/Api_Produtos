@@ -15,8 +15,8 @@ class ProdutoValidation
             $messages["preco"] = self::preco($request['preco'] ?? 0);
             $messages["quantidade"] = self::quantidade($request['quantidade'] ?? 0);
             $messages["quantiade_minima"] = self::quantidade_min($request);
-            $messages["categoria"] = self::categoria_id($request['categoria_id'] ?? 0);
-            $messages["fornecedor"] = self::fornecedor_id($request['fornecedor_id'] ?? 0);
+            $messages["categoria_id"] = self::categoria_id($request['categoria_id'] ?? 0);
+            $messages["fornecedor_id"] = self::fornecedor_id($request['fornecedor_id'] ?? 0);
             $messages["descricao"] = self::descricao($request['descricao'] ?? null);
             $messages["unidade_medida"] = self::unidade_medida($request['unidade_medida'] ?? null);
 
@@ -51,7 +51,7 @@ class ProdutoValidation
             }
                 elseif(!ProdutoModel::isExistProduto($produto, (int)$id)) // validação de Existência
                 {
-                    $messages[] = "O nome do Produto já existe";
+                    $messages[] = "Esse produto já foi cadastrado";
                 }
         
                     return !empty($messages) && isset($messages) ? $messages: null; // se não for vazio e existir retornar menssagem se não null
@@ -165,7 +165,7 @@ class ProdutoValidation
                     }
                         elseif(!ProdutoModel::isExistCategoria((int)$categoria_id)) // validação de Existência
                         {
-                            $messages[] = "O campo Categoria não existe"; 
+                            $messages[] = "Essa Categoria não existe"; 
                         }
 
                             return !empty($messages) && isset($messages) ? $messages: null; // se não for vazio e existir retornar menssagem se não null
@@ -189,7 +189,7 @@ class ProdutoValidation
                     }
                         elseif(!ProdutoModel::isExistFornecedor((int)$fornecedor_id)) // validação de Existência
                         {
-                            $messages[] = "O campo Fornecedor não existe"; 
+                            $messages[] = "Esse Fornecedor não existe"; 
                         }
 
                             return !empty($messages) && isset($messages) ? $messages: null; // se não for vazio e existir retornar menssagem se não null

@@ -32,10 +32,10 @@ class Router
           $request = parse_url($request, PHP_URL_PATH);// Remove parâmetros de query string (ex: ?teste=1)
 
         
-          if ($request === "/produtos") // Roteamento simples
+          if ($request === "/produtos" || $request === "/produtos/") // Roteamento simples
           {
 
-            if($method === 'PUT' || $method === 'DELETE') // se for igual post endpoint não sera permitido 
+            if($method === 'PUT' || $method === 'DELETE') // se for igual put ou delete endpoint não sera permitido 
             {
               http_response_code(405);
               echo json_encode(["erro" => "Método não permitido para essa ação"]);
@@ -44,11 +44,11 @@ class Router
            
               if($method === 'GET')
               {
-                $produtoController->exibirProdutos();  // Retorna a resposta 
+                $produtoController->exibirProdutos();  // Executar método 
               }
                 elseif($method === 'POST')
                 {
-                  $produtoController->CadastrarProdutos(); // Retorna a resposta
+                  $produtoController->CadastrarProdutos(); // Executar método 
                 }
 
           } 

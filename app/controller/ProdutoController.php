@@ -178,7 +178,7 @@ class ProdutoController
                     }
                     
                     $responses = ProdutoValidation::validationAllData($request); // validação do dados
-
+                    
                     $chaveRequest = array_keys($request); // pegar chaves da requição
                     
 
