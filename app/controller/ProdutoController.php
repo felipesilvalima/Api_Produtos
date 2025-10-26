@@ -21,24 +21,35 @@ class ProdutoController
     {
         try 
         {
-           
-            $listaProdutos = $this->ProdutoModel->exibirTodosProdutos(); // Busca todos os produtos
+            $listaProdutos = [];
 
-                if(empty($listaProdutos)) 
+            if(isset($_GET['atributos']))
+            {
+                $Atributos = $_GET['atributos'] ?? null;
+                $listaProdutos = $this->ProdutoModel->SelectAtributes($Atributos);
+               
+            }
+                else
                 {
-                    http_response_code(404); // Código 404 se não houver produtos
+                    $listaProdutos = $this->ProdutoModel->exibirTodosProdutos(); // Busca todos os produtos
+                }
+           
+
+                if(!empty($listaProdutos)) 
+                {   
+                    http_response_code(200); // Código 200 OK
                     echo json_encode([
-                        "status" => false,
-                        "mensagem" => "Nenhum Recurso encontrado"
-                    ]);
+                        "status" => true,
+                        "datas" => $listaProdutos
+                    ]); // Retorna lista de produtos em JSON
                 } 
                     else 
                     {
-                        http_response_code(200); // Código 200 OK
+                        http_response_code(404); // Código 404 se não houver produtos
                         echo json_encode([
-                            "status" => true,
-                            "dados" => $listaProdutos
-                        ]); // Retorna lista de produtos em JSON
+                            "status" => false,
+                            "mensagem" => "Nenhum Recurso encontrado"
+                        ]);  
                     }         
                     
         } 
@@ -59,22 +70,20 @@ class ProdutoController
             
             if(isset($id))
             {
-                
-                if(!empty($ProdutoId)) 
+
+                if(!$this->ProdutoModel->isExistID($id))
                 {
-                    http_response_code(200); // Código 200 OK
+                    http_response_code(404);
+                    echo json_encode(["error" => "Recurso não encontrado"]);
+                    die;
+                } 
+                    else 
+                    {
+                        http_response_code(200); // Código 200 OK
                         echo json_encode([
                             "status" => true,
-                            "dados" => $ProdutoId
+                            "data" => $ProdutoId
                         ]); // Retorna lista de produtos em JSON
-                } 
-                    else
-                    {
-                       http_response_code(404); // Código 404 se não houver produtos
-                        echo json_encode([
-                            "status" => false,
-                            "mensagem" => "Recurso não encontrado"
-                        ]); 
                     }         
                 
             }
@@ -155,13 +164,11 @@ class ProdutoController
 
                 $request = Methods::requestPut(); // pegando requisição PUT
 
-                $notData = $request;
+                $notData = $request; // pegando a penas a requsição sem id
 
                 is_array($request) ? $request = ["id" => $id] + $request : null; // se request e um array adiciono uma chave com valor do id em request
                 
-                $isExistisID = $this->ProdutoModel->isExistID($id); // verificando se existir o recurso solicitado
-                
-                if(!$isExistisID) // se não existir
+                if(!$this->ProdutoModel->isExistID($id)) // verificando se existir o recurso solicitado
                 {
                     http_response_code(404);
                     echo json_encode(["error" => "Impossivel realizar atualização. O recurso solicitado não existe"]);
@@ -275,9 +282,8 @@ class ProdutoController
 
             if(isset($id))
             {
-                $isExistisID = $this->ProdutoModel->isExistID($id); // verificando se existir o recurso solicitado
                 
-                if(!$isExistisID) // se não existir
+                if(!$this->ProdutoModel->isExistID($id))  // verificando se existir o recurso solicitado
                 {
                     http_response_code(404);
                     echo json_encode(["error" => "Impossivel realizar Remoção. O recurso solicitado não existe"]);

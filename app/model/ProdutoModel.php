@@ -3,6 +3,7 @@
 namespace app\model;
 
 use app\model\Conexao;
+use ErrorException;
 use Exception;
 use PDO;
 use PDOException;
@@ -31,12 +32,42 @@ class ProdutoModel
     {
         try 
         {
-            $sql = "SELECT * FROM Produtos ORDER BY id"; // SQL para listar todos os produtos
+//git commit -m "retornando o relacionamento entre as tabelas"
+            $sql = "SELECT P.*, P.id AS p_id, C.*, C.id AS c_id,  C.descricao AS c_desc, F.*, F.id As f_id  
+            FROM Produtos AS P INNER JOIN categoria AS C ON P.categoria_id = C.id  INNER JOIN fornecedor AS F ON P.fornecedor_id = F.id"; // SQL para listar todos os produtos
             $stm = self::$conexao->Conexao()->prepare($sql);  // Prepara a query
             $stm->execute();                            // Executa a query
 
             $listarProdutos = $stm->fetchAll(PDO::FETCH_OBJ); // Pega todos os resultados como objetos
-            return $listarProdutos;                             // Retorna o array de objetos
+
+            foreach ($listarProdutos as $line) 
+            {
+                $datas[] = [
+                    'id' => $line->p_id,
+                    'categoria_id' => $line->categoria_id,
+                    'fornecedor_id' => $line->fornecedor_id,
+                    'produto' => $line->produto,
+                    'preco' => $line->preco,
+                    'quantidade' => $line->quantidade_max,
+                    'quantidade_min' => $line->quantidade_min,
+                    'descricao' => $line->descricao,
+                    'unidade_medida' => $line->unidade_medida,
+                    'categoria' => [
+                        'id' => $line->c_id,
+                        'categoria' => $line->categoria,
+                        'descricao' => $line->c_desc,
+                    ],
+                    'fornecedor' => [
+                        'id' => $line->f_id,
+                        'fornecedor' => $line->fornecedor,
+                        'cpf' => $line->cpf,
+                        'telefone' => $line->telefone,
+                        'endereco' => $line->endereco,
+                    ]
+                 ];
+            }
+
+            return $datas; // Retorna o array de objetos
         
         } 
             catch (PDOException $e) 
@@ -49,13 +80,39 @@ class ProdutoModel
     {
         try 
         {
-            $sql = "SELECT * FROM Produtos WHERE id = :id"; // SQL para listar todos os produtos
+            $sql = "SELECT P.*, P.id AS p_id, C.*, C.id AS c_id,  C.descricao AS c_desc, F.*, F.id As f_id  
+            FROM Produtos AS P INNER JOIN categoria AS C ON P.categoria_id = C.id  INNER JOIN fornecedor AS F ON P.fornecedor_id = F.id WHERE P.id = :id"; // SQL para listar todos os produtos
             $stm = self::$conexao->Conexao()->prepare($sql);  // Prepara a query
             $stm->bindParam(':id', $id, PDO::PARAM_INT); // passando o parâmetro
             $stm->execute(); // Executa a query
 
-            $listarProdutos = $stm->fetch(PDO::FETCH_OBJ); // Pega o resultados como objetos
-            return $listarProdutos;  // Retorna o array de objeto
+            $line = $stm->fetch(PDO::FETCH_OBJ); // Pega o resultados como objetos
+
+                $data = [
+                    'id' => $line->p_id,
+                    'categoria_id' => $line->categoria_id,
+                    'fornecedor_id' => $line->fornecedor_id,
+                    'produto' => $line->produto,
+                    'preco' => $line->preco,
+                    'quantidade' => $line->quantidade_max,
+                    'quantidade_min' => $line->quantidade_min,
+                    'descricao' => $line->descricao,
+                    'unidade_medida' => $line->unidade_medida,
+                    'categoria' => [
+                        'id' => $line->c_id,
+                        'categoria' => $line->categoria,
+                        'descricao' => $line->c_desc,
+                    ],
+                    'fornecedor' => [
+                        'id' => $line->f_id,
+                        'fornecedor' => $line->fornecedor,
+                        'cpf' => $line->cpf,
+                        'telefone' => $line->telefone,
+                        'endereco' => $line->endereco,
+                    ]
+                 ];
+
+            return $data;  // Retorna o array de objeto
         
         } 
             catch (PDOException $e) 
@@ -157,14 +214,14 @@ class ProdutoModel
 
 
             $this->id = $id;
-            $this->produto = isset($request['produto']) && !empty($request['produto']) ? $request['produto'] : $values->produto;
-            $this->descricao = isset($request['descricao']) && !empty($request['descricao']) ? $request['descricao'] : $values->descricao;
-            $this->preco =  isset($request['preco']) && !empty($request['preco']) ? $request['preco'] : $values->preco;
-            $this->quantidade = isset($request['quantidade']) && !empty($request['quantidade']) ? $request['quantidade'] : $values->quantidade_max;
-            $this->quantidade_min = isset($request['quantidade_min']) && !empty($request['quantidade_min']) ? $request['quantidade_min'] : $values->quantidade_min;
-            $this->unidade_medida =  isset($request['unidade_medida']) && !empty($request['unidade_medida']) ? $request['unidade_medida'] : $values->unidade_medida;
-            $this->categoria_id =  isset($request['categoria_id']) && !empty($request['categoria_id']) ? $request['categoria_id'] : $values->categoria_id;
-            $this->fornecedor_id = isset($request['categofornecedor_idria_id']) && !empty($request['fornecedor_id']) ? $request['fornecedor_id'] : $values->categoria_id;
+            $this->produto = isset($request['produto']) && !empty($request['produto']) ? $request['produto'] : $values['produto'];
+            $this->descricao = isset($request['descricao']) && !empty($request['descricao']) ? $request['descricao'] : $values['descricao'];
+            $this->preco =  isset($request['preco']) && !empty($request['preco']) ? $request['preco'] : $values['preco'];
+            $this->quantidade = isset($request['quantidade']) && !empty($request['quantidade']) ? $request['quantidade'] : $values['quantidade'];
+            $this->quantidade_min = isset($request['quantidade_min']) && !empty($request['quantidade_min']) ? $request['quantidade_min'] : $values['quantidade_min'];
+            $this->unidade_medida =  isset($request['unidade_medida']) && !empty($request['unidade_medida']) ? $request['unidade_medida'] : $values['unidade_medida'];
+            $this->categoria_id =  isset($request['categoria_id']) && !empty($request['categoria_id']) ? $request['categoria_id'] : $values['categoria_id'];
+            $this->fornecedor_id = isset($request['categofornecedor_idria_id']) && !empty($request['fornecedor_id']) ? $request['fornecedor_id'] : $values['fornecedor_id'];
 
             $sql = "UPDATE produtos
             SET produto=:produto, descricao=:descricao, preco=:preco, quantidade_max=:quantidade, quantidade_min=:quantidade_min, unidade_medida=:unidade_medida, categoria_id=:categoria_id, fornecedor_id=:fornecedor_id, usuario_id=:usuario_id WHERE id = :id"; // SQL para listar todos os produtos
@@ -208,6 +265,32 @@ class ProdutoModel
         }
 
         return false;
+    }
+
+    public static function SelectAtributes(string $atributos)
+    {
+        try
+        {
+
+            $sql = "SELECT $atributos FROM produtos ORDER BY id";
+            $stm = self::$conexao->Conexao()->prepare($sql);
+            $stm->execute();
+            
+            $listaAtributos = $stm->fetchAll(PDO::FETCH_OBJ);
+
+            if(!empty($listaAtributos))
+            {
+                return $listaAtributos;
+            }
+    
+            return [];
+        } 
+            catch(PDOException $e)
+            {
+                throw new Exception("error no banco de dados" . $e->getMessage());
+            }
+        
+
     }
 
 
