@@ -40,6 +40,11 @@ class ProdutoModel
 
             $listarProdutos = $stm->fetchAll(PDO::FETCH_OBJ); // Pega todos os resultados como objetos
 
+            if(!$listarProdutos) // se não existir a linha retorne array vazio
+            {
+                return [];
+            }
+
             foreach ($listarProdutos as $line) 
             {
                 $datas[] = [
@@ -88,6 +93,11 @@ class ProdutoModel
 
             $line = $stm->fetch(PDO::FETCH_OBJ); // Pega o resultados como objetos
 
+            if(!$line) // se não existir a linha retorne array vazio
+            {
+                return [];
+            }
+
                 $data = [
                     'id' => $line->p_id,
                     'categoria_id' => $line->categoria_id,
@@ -111,7 +121,8 @@ class ProdutoModel
                         'endereco' => $line->endereco,
                     ]
                  ];
-
+            
+            
             return $data;  // Retorna o array de objeto
         
         } 
@@ -168,14 +179,14 @@ class ProdutoModel
          try 
         {
             $this->id = $id;
-            $this->produto = $request['produto'];
-            $this->descricao = $request['descricao'];
-            $this->preco = $request['preco'];
-            $this->quantidade = $request['quantidade'];
-            $this->quantidade_min = $request['quantidade_min'];
-            $this->unidade_medida = $request['unidade_medida'];
-            $this->categoria_id = $request['categoria_id'];
-            $this->fornecedor_id = $request['fornecedor_id'];
+            $this->produto = $request['produto'] ?? null;
+            $this->descricao = $request['descricao'] ?? null;
+            $this->preco = $request['preco'] ?? 0.00;
+            $this->quantidade = $request['quantidade'] ?? 0;
+            $this->quantidade_min = $request['quantidade_min'] ?? 0;
+            $this->unidade_medida = $request['unidade_medida'] ?? null;
+            $this->categoria_id = $request['categoria_id'] ?? 0;
+            $this->fornecedor_id = $request['fornecedor_id'] ?? 0;
 
             $sql = "UPDATE produtos
             SET produto=:produto, descricao=:descricao, preco=:preco, quantidade_max=:quantidade, quantidade_min=:quantidade_min, unidade_medida=:unidade_medida, categoria_id=:categoria_id, fornecedor_id=:fornecedor_id, usuario_id=:usuario_id WHERE id = :id"; // SQL para listar todos os produtos
@@ -267,33 +278,6 @@ class ProdutoModel
         return false;
     }
 
-    public static function SelectAtributes(string $atributos)
-    {
-        try
-        {
-
-            $sql = "SELECT $atributos FROM produtos ORDER BY id";
-            $stm = self::$conexao->Conexao()->prepare($sql);
-            $stm->execute();
-            
-            $listaAtributos = $stm->fetchAll(PDO::FETCH_OBJ);
-
-            if(!empty($listaAtributos))
-            {
-                return $listaAtributos;
-            }
-    
-            return [];
-        } 
-            catch(PDOException $e)
-            {
-                throw new Exception("error no banco de dados" . $e->getMessage());
-            }
-        
-
-    }
-
-
     public static function isExistProduto(string $produto ,int $id)
     {
         try 
@@ -381,7 +365,7 @@ class ProdutoModel
             $stm->execute();
 
             $verificarID = $stm->fetch(PDO::FETCH_OBJ);
-        
+            
             if(empty($verificarID))
             {
                 return false;

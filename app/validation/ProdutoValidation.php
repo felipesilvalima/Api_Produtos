@@ -10,30 +10,43 @@ class ProdutoValidation
     public static function validationAllData(array $request)
     {
         $messages = [];
-          
+
             $messages["produto"] = self::Produto($request['produto'] ?? null, $request['id'] ?? 0); // recebendo o retorno das menssagens
             $messages["preco"] = self::preco($request['preco'] ?? 0);
             $messages["quantidade"] = self::quantidade($request['quantidade'] ?? 0);
-            $messages["quantiade_minima"] = self::quantidade_min($request);
-            $messages["categoria_id"] = self::categoria_id($request['categoria_id'] ?? 0);
-            $messages["fornecedor_id"] = self::fornecedor_id($request['fornecedor_id'] ?? 0);
+            $messages["quantidade_min"] = self::quantidade_min($request);
             $messages["descricao"] = self::descricao($request['descricao'] ?? null);
             $messages["unidade_medida"] = self::unidade_medida($request['unidade_medida'] ?? null);
+            $messages["categoria_id"] = self::categoria_id($request['categoria_id'] ?? 0);
+            $messages["fornecedor_id"] = self::fornecedor_id($request['fornecedor_id'] ?? 0);
+             
+            unset($request["id"]); // removendo id
+            $keys = array_keys($messages); // chaves de validações
+            $keys_request = array_keys($request); // chaves da requisição
+            $atributos = array_filter($keys_request, fn($k) => $k != "produto" && $k != "preco" && $k != "quantidade" && $k != "descricao" && $k != "unidade_medida"  && $k != "categoria_id"  && $k != "fornecedor_id" && $k != "quantidade_min"); //pegando apenas atributos inválidos
 
-            $responses = [];
-
-            $responses = array_filter($messages, fn($v) => !is_null($v)); // return apenas arrays que não são nulos
-            
-            if(!empty($responses)) // se as resposta não for vázia, retornar resposta, se não retornar null
-            {
-                return $responses;
-            }
-                else
+                if(count($keys_request)  > count($keys)) // verificar a quantidade de atributos
                 {
-                    return null;
+                    foreach($atributos as $atributo)
+                    {
+                        $messages[$atributo] = ["Campo inválido"];
+                    }
                 }
-
         
+                $responses = [];
+            
+                $responses = array_filter($messages, fn($v) => !is_null($v)); // return apenas arrays que não são nulos
+            
+                    if(!empty($responses)) // se as resposta não for vázia, retornar resposta, se não retornar null
+                    {
+                        return $responses;
+                    }
+                        else
+                        {
+                            return null;
+                        }
+
+  
     }
 
 

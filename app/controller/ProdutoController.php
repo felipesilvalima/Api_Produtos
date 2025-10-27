@@ -21,20 +21,9 @@ class ProdutoController
     {
         try 
         {
-            $listaProdutos = [];
 
-            if(isset($_GET['atributos']))
-            {
-                $Atributos = $_GET['atributos'] ?? null;
-                $listaProdutos = $this->ProdutoModel->SelectAtributes($Atributos);
-               
-            }
-                else
-                {
-                    $listaProdutos = $this->ProdutoModel->exibirTodosProdutos(); // Busca todos os produtos
-                }
-           
-
+            $listaProdutos = $this->ProdutoModel->exibirTodosProdutos(); // Busca todos os produtos
+            
                 if(!empty($listaProdutos)) 
                 {   
                     http_response_code(200); // Código 200 OK
@@ -66,8 +55,6 @@ class ProdutoController
         try 
         {
     
-            $ProdutoId = $this->ProdutoModel->exibirProdutosId($id); // Busca por um produto
-            
             if(isset($id))
             {
 
@@ -78,12 +65,17 @@ class ProdutoController
                     die;
                 } 
                     else 
-                    {
-                        http_response_code(200); // Código 200 OK
-                        echo json_encode([
-                            "status" => true,
-                            "data" => $ProdutoId
-                        ]); // Retorna lista de produtos em JSON
+                    {              
+                        $ProdutoId = $this->ProdutoModel->exibirProdutosId($id); // Busca por um produto
+    
+                            if(!empty($ProdutoId))
+                            {
+                                http_response_code(200); // Código 200 OK
+                                echo json_encode([
+                                    "status" => true,
+                                    "data" => $ProdutoId
+                                ]); // Retorna lista de produtos em JSON
+                            }
                     }         
                 
             }
@@ -164,7 +156,7 @@ class ProdutoController
 
                 $request = Methods::requestPut(); // pegando requisição PUT
 
-                $notData = $request; // pegando a penas a requsição sem id
+                $notRequestID = $request; // pegando a penas a requsição sem id
 
                 is_array($request) ? $request = ["id" => $id] + $request : null; // se request e um array adiciono uma chave com valor do id em request
                 
@@ -178,7 +170,7 @@ class ProdutoController
                 if($_SERVER['REQUEST_METHOD'] === 'PATCH') // se método for PATCH
                 {
 
-                    if(empty($notData)) // verificar se tem algum campo preenchdio 
+                    if(empty($notRequestID)) // verificar se tem algum campo preenchdio 
                     {
                         echo json_encode(["error" => "Nenhum campo está preenchido"]);
                         die;
