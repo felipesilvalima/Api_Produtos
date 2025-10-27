@@ -89,7 +89,7 @@ class Router
       } 
         catch (PDOException $e) 
         {
-          echo"error" . $e->getMessage();
+          echo json_encode(["error" => $e->getMessage()]);
         }
     }
 }

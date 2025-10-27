@@ -265,17 +265,25 @@ class ProdutoModel
 
     public function deleteProduto(int $id)
     {
-        $sql = "DELETE FROM produtos WHERE id = :id"; // SQL para remover uma listar de produto
-        $stm = self::$conexao->Conexao()->prepare($sql); // Prepara a query
-        $stm->bindParam(':id', $id, PDO::PARAM_INT); // passando o parâmetro
-        $stm->execute(); // Executa a query
-
-        if($stm)
+        try
         {
-            return true;
-        }
 
-        return false;
+            $sql = "DELETE FROM produtos WHERE id = :id"; // SQL para remover uma listar de produto
+            $stm = self::$conexao->Conexao()->prepare($sql); // Prepara a query
+            $stm->bindParam(':id', $id, PDO::PARAM_INT); // passando o parâmetro
+            $stm->execute(); // Executa a query
+    
+            if($stm)
+            {
+                return true;
+            }
+    
+            return false;
+        }
+            catch(PDOException $e)
+            {
+                throw new Exception("error no banco de dados" . $e->getMessage());  // Lança exceção em caso de erro
+            }
     }
 
     public static function isExistProduto(string $produto ,int $id)
@@ -294,6 +302,7 @@ class ProdutoModel
             }
 
             return true;
+            
         
         } 
             catch (PDOException $e) 
