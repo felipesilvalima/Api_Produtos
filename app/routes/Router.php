@@ -35,7 +35,7 @@ class Router
           if ($request === "/produtos" || $request === "/produtos/") // Roteamento simples
           {
 
-            if($method === 'PUT' || $method === 'DELETE') // se for igual put ou delete endpoint não sera permitido 
+            if($method === 'PUT' || $method === 'DELETE' || $method === 'PATCH') // se for igual put ou delete endpoint não sera permitido 
             {
               http_response_code(405);
               echo json_encode(["erro" => "Método não permitido para essa ação"]);
