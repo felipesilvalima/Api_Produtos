@@ -136,12 +136,12 @@ class ProdutoModel
     {
         try 
         {
-            $this->produto = $request['produto'] ?? null;
-            $this->descricao = $request['descricao'] ?? null;
+            $this->produto = ucfirst(strtolower($request['produto'])) ?? null;
+            $this->descricao = ucfirst(strtolower($request['descricao'])) ?? null;
             $this->preco = $request['preco'] ?? 0;
             $this->quantidade = $request['quantidade'] ?? 0;
             $this->quantidade_min = $request['quantidade_min'] ?? 0;
-            $this->unidade_medida = $request['unidade_medida'] ?? null;
+            $this->unidade_medida = ucfirst(strtolower($request['unidade_medida'])) ?? null;
             $this->categoria_id = $request['categoria_id'] ?? 0;
             $this->fornecedor_id = $request['fornecedor_id'] ?? 0;
 
@@ -179,12 +179,12 @@ class ProdutoModel
          try 
         {
             $this->id = $id;
-            $this->produto = $request['produto'] ?? null;
-            $this->descricao = $request['descricao'] ?? null;
+            $this->produto = ucfirst(strtolower($request['produto'])) ?? null;
+            $this->descricao = ucfirst(strtolower($request['descricao'])) ?? null;
             $this->preco = $request['preco'] ?? 0.00;
             $this->quantidade = $request['quantidade'] ?? 0;
             $this->quantidade_min = $request['quantidade_min'] ?? 0;
-            $this->unidade_medida = $request['unidade_medida'] ?? null;
+            $this->unidade_medida =  ucfirst(strtolower($request['unidade_medida'])) ?? null;
             $this->categoria_id = $request['categoria_id'] ?? 0;
             $this->fornecedor_id = $request['fornecedor_id'] ?? 0;
 
@@ -225,12 +225,12 @@ class ProdutoModel
 
 
             $this->id = $id;
-            $this->produto = isset($request['produto']) && !empty($request['produto']) ? $request['produto'] : $values['produto'];
-            $this->descricao = isset($request['descricao']) && !empty($request['descricao']) ? $request['descricao'] : $values['descricao'];
+            $this->produto = isset($request['produto']) && !empty($request['produto']) ? ucfirst(strtolower($request['produto'])) : $values['produto'];
+            $this->descricao = isset($request['descricao']) && !empty($request['descricao']) ? ucfirst(strtolower($request['descricao'])) : $values['descricao'];
             $this->preco =  isset($request['preco']) && !empty($request['preco']) ? $request['preco'] : $values['preco'];
             $this->quantidade = isset($request['quantidade']) && !empty($request['quantidade']) ? $request['quantidade'] : $values['quantidade'];
             $this->quantidade_min = isset($request['quantidade_min']) && !empty($request['quantidade_min']) ? $request['quantidade_min'] : $values['quantidade_min'];
-            $this->unidade_medida =  isset($request['unidade_medida']) && !empty($request['unidade_medida']) ? $request['unidade_medida'] : $values['unidade_medida'];
+            $this->unidade_medida =  isset($request['unidade_medida']) && !empty($request['unidade_medida']) ? ucfirst(strtolower($request['unidade_medida'])) : $values['unidade_medida'];
             $this->categoria_id =  isset($request['categoria_id']) && !empty($request['categoria_id']) ? $request['categoria_id'] : $values['categoria_id'];
             $this->fornecedor_id = isset($request['categofornecedor_idria_id']) && !empty($request['fornecedor_id']) ? $request['fornecedor_id'] : $values['fornecedor_id'];
 

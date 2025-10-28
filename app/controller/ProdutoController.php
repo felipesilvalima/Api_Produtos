@@ -30,7 +30,7 @@ class ProdutoController
                     echo json_encode([
                         "status" => true,
                         "datas" => $listaProdutos
-                    ]); // Retorna lista de produtos em JSON
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE); // Retorna lista de produtos em JSON
                 } 
                     else 
                     {
@@ -74,7 +74,7 @@ class ProdutoController
                                 echo json_encode([
                                     "status" => true,
                                     "data" => $ProdutoId
-                                ]); // Retorna lista de produtos em JSON
+                                ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE); // Retorna lista de produtos em JSON
                             }
                     }         
                 
@@ -123,7 +123,7 @@ class ProdutoController
                                 "status" => true,
                                 "mensagem" => "Produto Inserido com sucesso",
                                 "data" => $request
-                            ]);
+                            ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
                         }
                             else // error interno de model
                             {
@@ -207,7 +207,7 @@ class ProdutoController
                                     "status" => true,
                                     "mensagem" => "Produto Atualizado com sucesso",
                                     "data" => $request
-                                ]);
+                                ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
                             }
                                 else
                                 {
@@ -242,7 +242,7 @@ class ProdutoController
                                     "status" => true,
                                     "mensagem" => "Produto Atualizado com sucesso",
                                     "data" => $request
-                                ]);
+                                ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
                             }
                                 else
                                 {
@@ -291,7 +291,7 @@ class ProdutoController
                         "status" => true,
                         "mensagem" => "Produto removido com sucesso",
                         "data" => $deleteDates
-                    ]);
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
                     die;
                 }
