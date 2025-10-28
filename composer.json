@@ -10,8 +10,5 @@
             "name": "Felipe silva lima",
             "email": "felipesilvalima200@gmail.com"
         }
-    ],
-    "require": {
-        "firebase/php-jwt": "^6.11"
-    }
+    ]
 }
