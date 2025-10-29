@@ -30,11 +30,40 @@ class Router
 
           $request = parse_url($request, PHP_URL_PATH);// Remove parâmetros de query string (ex: ?teste=1)
 
-        if($request === "/login" && $method === "POST")
-        {
-            $autenticacao->Login();
-            die;
-        }
+
+          switch ($request) 
+          {
+            case '/login':
+              if($method === 'POST')
+              {
+                $autenticacao->Login();
+                die;
+              }
+              break;
+            case '/logout':
+              if($method === 'POST')
+              {
+                $autenticacao->Logout();
+                die;
+              }
+              break;
+            case '/refresh':
+              if($method === 'POST')
+              {
+                $autenticacao->Refresh();
+                die;
+              }
+              break;
+            case '/me':
+              if($method === 'POST')
+              {
+                $autenticacao->Me();
+                die;
+              }
+              break;
+          }
+
+       
 
           if ($request === "/produtos" || $request === "/produtos/") // Roteamento simples
           {
@@ -94,10 +123,15 @@ class Router
                 http_response_code(404);
                 echo json_encode(["erro" => "Rota não encontrada"]);
               }
+
+
+
+              
                  
       } 
         catch (PDOException $e) 
         {
+          http_response_code(500);
           echo json_encode(["error" => $e->getMessage()]);
         }
     }

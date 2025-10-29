@@ -32,7 +32,7 @@ class ProdutoModel
     {
         try 
         {
-//git commit -m "retornando o relacionamento entre as tabelas"
+
             $sql = "SELECT P.*, P.id AS p_id, C.*, C.id AS c_id,  C.descricao AS c_desc, F.*, F.id As f_id  
             FROM Produtos AS P INNER JOIN categoria AS C ON P.categoria_id = C.id  INNER JOIN fornecedor AS F ON P.fornecedor_id = F.id"; // SQL para listar todos os produtos
             $stm = self::$conexao->Conexao()->prepare($sql);  // Prepara a query

@@ -25,9 +25,9 @@ class AuthController
                 
             $user = $this->AuthModel->Autentication($credencias);
 
-            if(!empty($user))
+            if($user)
             {
-                $token = AuthModel::generateToken($user);
+                $token = AuthModel::generateToken($_SESSION['Autenticado']);
                 
                 http_response_code(200);
                 echo json_encode([
@@ -62,5 +62,42 @@ class AuthController
         session_start();
         session_reset();
         session_destroy();
+
+        echo json_encode(["mensagem" => "Sessão Encerrada"],JSON_UNESCAPED_UNICODE);
+        die;
+    }
+
+    public function Me()
+    {
+        session_start();
+        
+        if(isset($_SESSION['Autenticado']) && !empty($_SESSION['Autenticado']))
+        {
+            http_response_code(200);
+            echo json_encode(["data" => $_SESSION['Autenticado']], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        }
+            else
+            {
+                 http_response_code(403);
+                echo json_encode(["mensagem" => "Usuário não está Autenticado"],JSON_UNESCAPED_UNICODE);
+            }
+    }
+
+    public function Refresh()
+    {
+        session_start();
+
+        if(isset($_SESSION['Autenticado']))
+        {
+            $token = AuthModel::generateToken($_SESSION['Autenticado']);
+
+            http_response_code(200);
+            echo json_encode(["token Renovado" => $token]);
+        }
+            else
+            {
+                http_response_code(403);
+                echo json_encode(["mensagem" => "Usuário não está Autenticado"],JSON_UNESCAPED_UNICODE);
+            }
     }
 }

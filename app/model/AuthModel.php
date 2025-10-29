@@ -41,8 +41,14 @@ class AuthModel
 
                     if(password_verify($this->password,$data->password)) // verificando se a senha está correta
                     {
-                        $_SESSION['Autenticado']; // criando sessao
-                        return $data;
+                        $datas = [
+                            "id" => $data->id,
+                            "nome" => $data->name,
+                            "email" => $data->email
+                        ];
+
+                        $_SESSION['Autenticado'] = $datas; // criando sessao
+                        return true;
                     }
                         else // senha inválida
                         {
@@ -63,14 +69,14 @@ class AuthModel
         
     }
 
-    public static function generateToken(object $user)
+    public static function generateToken(array $user)
     {
         try 
         { 
 
            // Dados do usuário autenticado
-            $idUser = $user->id; 
-            $name = $user->name;
+            $idUser = $user['id']; 
+            $name = $user['nome'];
 
              // Definir payload
                 $payload = [
@@ -89,6 +95,4 @@ class AuthModel
                echo "Erro ao gerar token:" . $e->getMessage();
             }
     }
-
-
 }
