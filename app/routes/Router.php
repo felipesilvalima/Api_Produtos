@@ -2,11 +2,9 @@
 
 namespace app\routes;
 
+use app\controller\AuthController;
 use app\controller\ProdutoController;
-use app\helpers\Request;
-use app\helpers\Uri;
-
-use Exception;
+use app\middleware\AuthMiddleware;
 use PDOException;
 
 class Router
@@ -25,13 +23,19 @@ class Router
               die;
           }
 
+          $autenticacao = new AuthController(); // criando a instacia de produto
           $produtoController = new ProdutoController(); // criando a instacia de produto
          
           $request = $_SERVER['REQUEST_URI']; // Captura a URL
 
           $request = parse_url($request, PHP_URL_PATH);// Remove parâmetros de query string (ex: ?teste=1)
 
-        
+        if($request === "/login" && $method === "POST")
+        {
+            $autenticacao->Login();
+            die;
+        }
+
           if ($request === "/produtos" || $request === "/produtos/") // Roteamento simples
           {
 
@@ -44,11 +48,13 @@ class Router
            
               if($method === 'GET')
               {
+                AuthMiddleware::Headles();
                 $produtoController->exibirProdutos();  // Executar método 
               }
                 elseif($method === 'POST')
                 {
-                  $produtoController->CadastrarProdutos(); // Executar método 
+                  AuthMiddleware::Headles();
+                  $produtoController->CadastrarProdutos(); // Executar método
                 }
 
           } 
@@ -60,14 +66,17 @@ class Router
 
                 if($method === 'GET')
                 {
+                  AuthMiddleware::Headles();
                   $produtoController->exibirProdutoId((int)$id); // Retorna a resposta
                 }
                   elseif($method === 'PUT' || $method === 'PATCH')
                   {
+                      AuthMiddleware::Headles();
                       $produtoController->UpdateProdutos((int)$id);
                   }
                     elseif($method === 'DELETE')
                     {
+                        AuthMiddleware::Headles();
                         $produtoController->delete((int)$id);
                     }
 

@@ -37,7 +37,7 @@ class ProdutoController
                         http_response_code(404); // Código 404 se não houver produtos
                         echo json_encode([
                             "status" => false,
-                            "mensagem" => "Nenhum Recurso encontrado"
+                            "mensagem" => "Nenhum Recurso encontrado",
                         ]);  
                     }         
                     
