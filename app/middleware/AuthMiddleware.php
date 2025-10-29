@@ -13,8 +13,7 @@ class AuthMiddleware
     {
         try 
         {
-           session_start();
-
+        
             $headers = getallheaders(); // pegando os headers;
             $tokenJWT = trim(str_replace('Bearer ', '', $headers['Authorization'] ?? '')); // pegando o token limpo
 
