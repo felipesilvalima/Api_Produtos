@@ -7,6 +7,7 @@ use Firebase\JWT\JWT;
 use PDO;
 use PDOException;
 
+require_once __DIR__. '/../../config/env.php';
 class AuthModel
 {
     
@@ -40,8 +41,8 @@ class AuthModel
 
                     if(password_verify($this->password,$data->password)) // verificando se a senha está correta
                     {
-                        $_SESSION['Autenticado'] = $data; // criando sessao
-                        return true;
+                        $_SESSION['Autenticado']; // criando sessao
+                        return $data;
                     }
                         else // senha inválida
                         {
@@ -65,8 +66,7 @@ class AuthModel
     public static function generateToken(object $user)
     {
         try 
-        {
-           $privateKey = '61921872314'; // chave privada
+        { 
 
            // Dados do usuário autenticado
             $idUser = $user->id; 
@@ -80,7 +80,7 @@ class AuthModel
                     'exp' => time() + 3600      // expira em 1 hora
                 ];   
 
-             return  $tokenJWT = JWT::encode($payload, $privateKey, 'HS256');  // Gerar token JWT (HMAC SHA256)
+             return JWT::encode($payload,  $_ENV['API_KEY'], 'HS256');  // Gerar token JWT (HMAC SHA256)
 
         } 
             catch (PDOException $e) // error ao gerar token 

@@ -6,6 +6,7 @@ use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use PDOException;
 
+require_once __DIR__. '/../../config/env.php';
 class AuthMiddleware
 {
      public static function Headles()
@@ -15,8 +16,7 @@ class AuthMiddleware
            session_start();
 
             $headers = getallheaders(); // pegando os headers;
-            $tokenJWT = trim(str_replace('Bearer ', '', $headers['Authorization'])); // pegando o token limpo
-            $privateKey = '61921872314'; // chave privada
+            $tokenJWT = trim(str_replace('Bearer ', '', $headers['Authorization'] ?? '')); // pegando o token limpo
 
 
             if (empty($tokenJWT)) // verificar se o token tá vázio
@@ -30,7 +30,7 @@ class AuthMiddleware
             }
 
             // Decodificar e validar token
-            $dados = JWT::decode($tokenJWT, new Key($privateKey, 'HS256'));
+            $dados = JWT::decode($tokenJWT, new Key($_ENV['API_KEY'], 'HS256'));
             
         }
             catch (\Firebase\JWT\ExpiredException $e) 

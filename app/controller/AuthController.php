@@ -22,10 +22,12 @@ class AuthController
                 "email" => $_POST['email'] ?? null,
                 "senha" => $_POST['senha'] ?? null
             ];
-              
-            if($this->AuthModel->Autentication($credencias))
+                
+            $user = $this->AuthModel->Autentication($credencias);
+
+            if(!empty($user))
             {
-                $token = AuthModel::generateToken($_SESSION['Autenticado']);
+                $token = AuthModel::generateToken($user);
                 
                 http_response_code(200);
                 echo json_encode([
