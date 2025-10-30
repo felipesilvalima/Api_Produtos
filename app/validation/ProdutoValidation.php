@@ -51,7 +51,7 @@ class ProdutoValidation
 
 
 
-    public static function Produto($produto, $id)
+    private static function Produto($produto, $id)
     {
 
        if(empty($produto)) // validação de presença
@@ -70,7 +70,7 @@ class ProdutoValidation
                     return !empty($messages) && isset($messages) ? $messages: null; // se não for vazio e existir retornar menssagem se não null
     }
 
-    public static function preco($preco)
+    private static function preco($preco)
     {
 
         if(empty($preco)) // validação de presença
@@ -89,7 +89,7 @@ class ProdutoValidation
                     return !empty($messages) && isset($messages) ? $messages: null; // se não for vazio e existir retornar menssagem se não null
     }
 
-    public static function quantidade($quantidade)
+    private static function quantidade($quantidade)
     {
         
         if(empty($quantidade)) // validação de presença
@@ -109,7 +109,7 @@ class ProdutoValidation
 
     }
 
-    public static function quantidade_min(array $produto)
+    private static function quantidade_min(array $produto)
     {
 
         $quantidade_min = $produto['quantidade_min'] ?? 0;
@@ -136,7 +136,7 @@ class ProdutoValidation
 
     }
 
-    public static function descricao($descricao)
+    private static function descricao($descricao)
     {
 
         if(!empty($descricao) && strlen($descricao) > 100)
@@ -151,7 +151,7 @@ class ProdutoValidation
             return !empty($messages) && isset($messages) ? $messages: null; // se não for vazio e existir retornar menssagem se não null 
     }
 
-    public static function unidade_medida($unidade_medida)
+    private static function unidade_medida($unidade_medida)
     {
         if(!empty($unidade_medida) && !preg_match('/^[+-]?\d+(?:[.,]\d+)?\s?(?:mg|g|kg|lb|oz|ml|l|cl|dl|gal|fl\s?oz|mm|cm|m|km|in|ft|cm²|m²|ft²|s|min|h|d|w|kw|wh|kwh|v|a|mah|°c|°f|k|un|pct|cx|dz|par|x)$/i
 ', $unidade_medida)) // validação de tipo de formato
@@ -162,7 +162,7 @@ class ProdutoValidation
             return !empty($messages) && isset($messages) ? $messages: null; // se não for vazio e existir retornar menssagem se não null  
     }
 
-    public static function categoria_id($categoria_id)
+    private static function categoria_id($categoria_id)
     {
         if(empty($categoria_id)) // validação de presença
         {
@@ -185,7 +185,7 @@ class ProdutoValidation
 
     }
 
-    public static function fornecedor_id($fornecedor_id)
+    private static function fornecedor_id($fornecedor_id)
     {
         
         if(empty($fornecedor_id)) // validação de presencia
