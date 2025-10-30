@@ -73,8 +73,15 @@ class AuthController
         session_reset(); // limpando a sessao
         session_destroy(); // destruindo a sessao
 
-        echo json_encode(["mensagem" => "Sessão Encerrada"],JSON_UNESCAPED_UNICODE);
-        die;
+        if(!isset($_SESSION['Autenticado']))
+        {
+            echo json_encode(["mensagem" => "Usuário não está Autenticado"],JSON_UNESCAPED_UNICODE);
+            die;
+        }
+            
+            http_response_code(200);
+            echo json_encode(["mensagem" => "Sessão Encerrada"],JSON_UNESCAPED_UNICODE);
+
     }
 
     public function Me()
@@ -100,6 +107,8 @@ class AuthController
         if(isset($_SESSION['Autenticado'])) // verificando se exister a sessao de autenticação
         {
             $token = AuthModel::generateToken($_SESSION['Autenticado']); // gerando um novo token
+
+            $_SESSION['TotalRefresh'] = 1; // após refresh outro token vai ser inválido
 
             http_response_code(200);
             echo json_encode(["token Renovado" => $token]);

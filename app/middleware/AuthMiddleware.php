@@ -13,23 +13,46 @@ class AuthMiddleware
     {
         try 
         {
-        
+            session_start();
+
             $headers = getallheaders(); // pegando os headers;
             $tokenJWT = trim(str_replace('Bearer ', '', $headers['Authorization'] ?? '')); // pegando o token limpo
 
-
-            if (empty($tokenJWT)) // verificar se o token tá vázio
-            {
-                http_response_code(401);
-                echo json_encode([
-                    "status" => false,
-                    "mensagem" => "Token ausente"
-                ]);
+             if(!isset($_SESSION['Autenticado']))
+             {
+                echo json_encode(["mensagem" => "Usuário não está Autenticado"],JSON_UNESCAPED_UNICODE);
                 die;
-            }
+             }
+
+                if (empty($tokenJWT)) // verificar se o token tá vázio
+                {
+                    http_response_code(401);
+                    echo json_encode([
+                        "status" => false,
+                        "mensagem" => "Token ausente"
+                    ]);
+                    die;
+                }
 
             // Decodificar e validar token
             $dados = JWT::decode($tokenJWT, new Key($_ENV['API_KEY'], 'HS256'));
+
+                if(isset($_SESSION['TotalRefresh']) && $_SESSION['TotalRefresh'] > 0) // verificar sé foi criado outro token
+                {
+                    if(isset($dados) && !empty($dados))
+                    {
+
+                        http_response_code(403);
+                        echo json_encode([
+                            "status" => false,
+                            "mensagem" => "Token inválido!"
+                        ]);
+    
+                        unset($_SESSION['TotalRefresh']); // limpa sessão
+                        unset($dados); // limpa token
+                        die; 
+                    }
+                }
             
         }
             catch (\Firebase\JWT\ExpiredException $e) 

@@ -48,14 +48,14 @@ class Router
               }
               break;
             case '/refresh':
-              if($method === 'POST')
+              if($method === 'GET')
               {
                 $autenticacao->Refresh();
                 die;
               }
               break;
             case '/me':
-              if($method === 'POST')
+              if($method === 'GET')
               {
                 $autenticacao->Me();
                 die;
