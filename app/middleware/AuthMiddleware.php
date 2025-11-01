@@ -16,15 +16,15 @@ class AuthMiddleware
             session_start();
 
             $headers = getallheaders(); // pegando os headers;
-            $tokenJWT = trim(str_replace('Bearer ', '', $headers['Authorization'] ?? '')); // pegando o token limpo
+            $tokenJWT = trim(preg_replace('/^Bearer\s*/i', '', $headers['Authorization'] ?? '')); // pegando o token limpo
 
              if(!isset($_SESSION['Autenticado']))
              {
                 echo json_encode(["mensagem" => "Usuário não está Autenticado"],JSON_UNESCAPED_UNICODE);
                 die;
              }
-
-                if (empty($tokenJWT)) // verificar se o token tá vázio
+            
+                if (empty($tokenJWT) ) // verificar se o token tá vázio
                 {
                     http_response_code(401);
                     echo json_encode([

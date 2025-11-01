@@ -16,7 +16,7 @@ class ProdutoController
     {
         $this->ProdutoModel = new ProdutoModel();
     }
-
+    
     public function exibirProdutos()
     {
         try 
