@@ -60,7 +60,7 @@ class AuthController
         catch (PDOException $e) // error no servidor
         {
            http_response_code(500);
-           echo "error no controller (Login)" . $e->getMessage();
+           echo json_encode(["error no controller (Login)" => $e->getMessage()]);
         }
 
 
