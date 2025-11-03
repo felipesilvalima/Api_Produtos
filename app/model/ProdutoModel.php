@@ -33,7 +33,15 @@ class ProdutoModel
         try 
         {
 
-            $sql = "SELECT P.*, P.id AS p_id, C.*, C.id AS c_id,  C.descricao AS c_desc, F.*, F.id As f_id  
+            $sql = "SELECT 
+            P.*,
+            P.id AS p_id,
+            P.descricao AS p_desc,
+            C.*,
+            C.id AS c_id,
+            C.descricao AS c_desc,
+            F.*,
+            F.id As f_id  
             FROM Produtos AS P INNER JOIN categoria AS C ON P.categoria_id = C.id  INNER JOIN fornecedor AS F ON P.fornecedor_id = F.id"; // SQL para listar todos os produtos
             $stm = self::$conexao->Conexao()->prepare($sql);  // Prepara a query
             $stm->execute();                            // Executa a query
@@ -55,7 +63,7 @@ class ProdutoModel
                     'preco' => $line->preco,
                     'quantidade' => $line->quantidade_max,
                     'quantidade_min' => $line->quantidade_min,
-                    'descricao' => $line->descricao,
+                    'descricao' => $line->p_desc,
                     'unidade_medida' => $line->unidade_medida,
                     'categoria' => [
                         'id' => $line->c_id,
@@ -286,7 +294,7 @@ class ProdutoModel
             }
     }
 
-    public static function isExistProduto(string $produto ,int $id)
+    public static function isExistProduto(string $produto , ?int $id = null)
     {
         try 
         {
