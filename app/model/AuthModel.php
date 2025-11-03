@@ -98,9 +98,5 @@ class AuthModel
                http_response_code(500);
                echo "Erro ao gerar token:" . $e->getMessage();
             }
-                finally
-                {
-                    self::$conexao::closeConexao(); // fechar conexao
-                }
     }
 }
