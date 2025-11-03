@@ -96,7 +96,7 @@ class AuthModel
             catch (PDOException $e) // error ao gerar token 
             {
                http_response_code(500);
-               echo "Erro ao gerar token:" . $e->getMessage();
+               throw new Exception("Erro ao gerar token:" . $e->getMessage());
             }
     }
 }
