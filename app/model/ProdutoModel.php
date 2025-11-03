@@ -80,6 +80,8 @@ class ProdutoModel
                  ];
             }
 
+            self::$conexao::closeConexao(); //fechando conexão
+
             return $datas; // Retorna o array de objetos
         
         } 
@@ -93,7 +95,15 @@ class ProdutoModel
     {
         try 
         {
-            $sql = "SELECT P.*, P.id AS p_id, C.*, C.id AS c_id,  C.descricao AS c_desc, F.*, F.id As f_id  
+            $sql = "SELECT 
+            P.*, 
+            P.id AS p_id,
+            P.descricao AS p_desc,
+            C.*,
+            C.id AS c_id,
+            C.descricao AS c_desc,
+            F.*,
+            F.id As f_id  
             FROM Produtos AS P INNER JOIN categoria AS C ON P.categoria_id = C.id  INNER JOIN fornecedor AS F ON P.fornecedor_id = F.id WHERE P.id = :id"; // SQL para listar todos os produtos
             $stm = self::$conexao->Conexao()->prepare($sql);  // Prepara a query
             $stm->bindParam(':id', $id, PDO::PARAM_INT); // passando o parâmetro
@@ -114,7 +124,7 @@ class ProdutoModel
                     'preco' => $line->preco,
                     'quantidade' => $line->quantidade_max,
                     'quantidade_min' => $line->quantidade_min,
-                    'descricao' => $line->descricao,
+                    'descricao' => $line->p_desc,
                     'unidade_medida' => $line->unidade_medida,
                     'categoria' => [
                         'id' => $line->c_id,
@@ -130,7 +140,8 @@ class ProdutoModel
                     ]
                  ];
             
-            
+            self::$conexao::closeConexao(); //fechando conexão
+
             return $data;  // Retorna o array de objeto
         
         } 
@@ -168,11 +179,13 @@ class ProdutoModel
             $stm->bindValue(':usuario_id', 2, PDO::PARAM_INT); // passando o parâmetro
             $stm->execute(); // Executa a query
 
+            self::$conexao::closeConexao();  //fechando conexão
+
             if($stm)
             {
                 return true;
             }
-
+            
             return false;
         
         } 
@@ -210,6 +223,8 @@ class ProdutoModel
             $stm->bindParam(':fornecedor_id', $this->fornecedor_id, PDO::PARAM_INT); // passando o parâmetro
             $stm->bindValue(':usuario_id', 2, PDO::PARAM_INT); // passando o parâmetro
             $stm->execute(); // Executa a query
+
+            self::$conexao::closeConexao();  //fechando conexão
 
             if($stm)
             {
@@ -257,6 +272,8 @@ class ProdutoModel
             $stm->bindValue(':usuario_id', 2, PDO::PARAM_INT); // passando o parâmetro
             $stm->execute(); // Executa a query
 
+            self::$conexao::closeConexao();  //fechando conexão
+
             if($stm)
             {
                 return true;
@@ -280,7 +297,9 @@ class ProdutoModel
             $stm = self::$conexao->Conexao()->prepare($sql); // Prepara a query
             $stm->bindParam(':id', $id, PDO::PARAM_INT); // passando o parâmetro
             $stm->execute(); // Executa a query
-    
+            
+            self::$conexao::closeConexao();  //fechando conexão
+
             if($stm)
             {
                 return true;
@@ -304,6 +323,8 @@ class ProdutoModel
             $stm->bindParam(':id', $id, PDO::PARAM_INT); // passando o parâmetro
             $stm->execute(); // Executa a query
 
+            self::$conexao::closeConexao();  //fechando conexão
+
             if($stm->rowCount() > 0)
             {
                 return false;
@@ -326,10 +347,12 @@ class ProdutoModel
             $sql = "SELECT id FROM categoria WHERE EXISTS(SELECT id FROM categoria WHERE id = :categoria_id)";
             $stm = self::$conexao->Conexao()->prepare($sql);
             $stm->bindParam(':categoria_id', $categoria_id, PDO::PARAM_INT);
-            $stm->execute();
+            $stm->execute(); 
 
             $verificarCategoria = $stm->fetch(PDO::FETCH_OBJ);
-    
+            
+            self::$conexao::closeConexao();  //fechando conexão
+
             if(empty($verificarCategoria))
             {
                 return false;
@@ -357,6 +380,8 @@ class ProdutoModel
             
             $verificarFornecedor = $stm->fetch(PDO::FETCH_OBJ);
 
+            self::$conexao::closeConexao();  //fechando conexão
+
                 if(empty($verificarFornecedor))
                 {
                     return false;
@@ -381,8 +406,10 @@ class ProdutoModel
             $stm->bindParam(':id', $id, PDO::PARAM_INT);
             $stm->execute();
 
-            $verificarID = $stm->fetch(PDO::FETCH_OBJ);
+            $verificarID = $stm->fetch(PDO::FETCH_OBJ); 
             
+            self::$conexao::closeConexao();  //fechando conexão
+
             if(empty($verificarID))
             {
                 return false;

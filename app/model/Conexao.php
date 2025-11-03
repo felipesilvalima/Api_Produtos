@@ -33,4 +33,13 @@ class Conexao
             }
     }
 
+    public static function closeConexao()
+    {
+        if(self::$conexao && !self::$conexao == null)
+        {
+            self::$conexao->close();
+            self::$conexao = null; 
+        }
+    }
+
 }
