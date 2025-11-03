@@ -80,8 +80,7 @@ class ProdutoModel
                  ];
             }
 
-            self::$conexao::closeConexao(); //fechando conexão
-
+            
             return $datas; // Retorna o array de objetos
         
         } 
@@ -89,6 +88,10 @@ class ProdutoModel
             {
                throw new Exception("error no banco de dados" . $e->getMessage()); // Lança exceção em caso de erro
             }
+                finally 
+                {
+                    self::$conexao::closeConexao(); //fechando conexão
+                }
     }
 
     public function exibirProdutosId(int $id)
@@ -140,8 +143,6 @@ class ProdutoModel
                     ]
                  ];
             
-            self::$conexao::closeConexao(); //fechando conexão
-
             return $data;  // Retorna o array de objeto
         
         } 
@@ -149,6 +150,10 @@ class ProdutoModel
             {
                 throw new Exception("error no banco de dados" . $e->getMessage()); // Lança exceção em caso de erro
             }
+                finally 
+                {
+                    self::$conexao::closeConexao(); //fechando conexão
+                }
     }
 
     public function inserirProdutos(array $request)
@@ -179,7 +184,6 @@ class ProdutoModel
             $stm->bindValue(':usuario_id', 2, PDO::PARAM_INT); // passando o parâmetro
             $stm->execute(); // Executa a query
 
-            self::$conexao::closeConexao();  //fechando conexão
 
             if($stm)
             {
@@ -193,6 +197,10 @@ class ProdutoModel
             {
                throw new Exception("error no banco de dados" . $e->getMessage()); // Lança exceção em caso de erro
             }
+                finally 
+                {
+                    self::$conexao::closeConexao(); //fechando conexão
+                }
     }
 
     public function UpdateProdutos(array $request, int $id)
@@ -224,8 +232,6 @@ class ProdutoModel
             $stm->bindValue(':usuario_id', 2, PDO::PARAM_INT); // passando o parâmetro
             $stm->execute(); // Executa a query
 
-            self::$conexao::closeConexao();  //fechando conexão
-
             if($stm)
             {
                 return true;
@@ -238,6 +244,10 @@ class ProdutoModel
             {
                throw new Exception("error no banco de dados" . $e->getMessage()); // Lança exceção em caso de erro
             }
+                finally 
+                {
+                    self::$conexao::closeConexao(); //fechando conexão
+                }
     }
 
      public function UpdateParcialProdutos(array $request, int $id)
@@ -272,8 +282,6 @@ class ProdutoModel
             $stm->bindValue(':usuario_id', 2, PDO::PARAM_INT); // passando o parâmetro
             $stm->execute(); // Executa a query
 
-            self::$conexao::closeConexao();  //fechando conexão
-
             if($stm)
             {
                 return true;
@@ -286,6 +294,10 @@ class ProdutoModel
             {
                throw new Exception("error no banco de dados" . $e->getMessage()); // Lança exceção em caso de erro
             }
+                finally 
+                {
+                    self::$conexao::closeConexao(); //fechando conexão
+                }
     }
 
     public function deleteProduto(int $id)
@@ -297,8 +309,6 @@ class ProdutoModel
             $stm = self::$conexao->Conexao()->prepare($sql); // Prepara a query
             $stm->bindParam(':id', $id, PDO::PARAM_INT); // passando o parâmetro
             $stm->execute(); // Executa a query
-            
-            self::$conexao::closeConexao();  //fechando conexão
 
             if($stm)
             {
@@ -311,6 +321,10 @@ class ProdutoModel
             {
                 throw new Exception("error no banco de dados" . $e->getMessage());  // Lança exceção em caso de erro
             }
+                finally 
+                {
+                    self::$conexao::closeConexao(); //fechando conexão
+                }
     }
 
     public static function isExistProduto(string $produto , ?int $id = null)
@@ -322,8 +336,6 @@ class ProdutoModel
             $stm->bindParam(':produto', $produto, PDO::PARAM_STR); // passando o parâmetro
             $stm->bindParam(':id', $id, PDO::PARAM_INT); // passando o parâmetro
             $stm->execute(); // Executa a query
-
-            self::$conexao::closeConexao();  //fechando conexão
 
             if($stm->rowCount() > 0)
             {
@@ -338,6 +350,10 @@ class ProdutoModel
             {
                 throw new Exception("error no banco de dados" . $e->getMessage()); // Lança exceção em caso de erro
             }
+                finally 
+                {
+                    self::$conexao::closeConexao(); //fechando conexão
+                }
     }
 
     public static function isExistCategoria(int $categoria_id)
@@ -350,8 +366,6 @@ class ProdutoModel
             $stm->execute(); 
 
             $verificarCategoria = $stm->fetch(PDO::FETCH_OBJ);
-            
-            self::$conexao::closeConexao();  //fechando conexão
 
             if(empty($verificarCategoria))
             {
@@ -364,8 +378,10 @@ class ProdutoModel
             {
                 throw new Exception("error no banco de dados" . $e->getMessage());
             }
-        
-
+                finally 
+                {
+                    self::$conexao::closeConexao(); //fechando conexão
+                }
     }
     
     public static function isExistFornecedor(int $fornecedor_id)
@@ -380,8 +396,6 @@ class ProdutoModel
             
             $verificarFornecedor = $stm->fetch(PDO::FETCH_OBJ);
 
-            self::$conexao::closeConexao();  //fechando conexão
-
                 if(empty($verificarFornecedor))
                 {
                     return false;
@@ -393,6 +407,10 @@ class ProdutoModel
             {
                throw new Exception("error no banco de dados" . $e->getMessage());
             }
+                finally 
+                {
+                    self::$conexao::closeConexao(); //fechando conexão
+                }
     }
         
     public static function isExistID(int $id)
@@ -408,8 +426,6 @@ class ProdutoModel
 
             $verificarID = $stm->fetch(PDO::FETCH_OBJ); 
             
-            self::$conexao::closeConexao();  //fechando conexão
-
             if(empty($verificarID))
             {
                 return false;
@@ -421,7 +437,10 @@ class ProdutoModel
             {
                 throw new Exception("error no banco de dados" . $e->getMessage());
             }
-        
+                finally 
+                {
+                    self::$conexao::closeConexao(); //fechando conexão
+                }
 
     }
 }
