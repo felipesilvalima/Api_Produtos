@@ -102,7 +102,7 @@ class ProdutoController
               'descricao' => $_POST['descricao'] ?? null,
               'unidade_medida' => $_POST['unidade_medida'] ?? null,
               'categoria_id' => $_POST['categoria_id'] ?? 0,
-              'fornecedor_id' => $_POST['fornecedor_id'] ?? 0
+              'fornecedor_id' => $_POST['fornecedor_id'] ?? 0,
             ];     
 
                 $response = ProdutoValidation::validationAllData($request);

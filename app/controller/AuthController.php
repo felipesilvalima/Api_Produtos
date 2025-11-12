@@ -24,9 +24,9 @@ class AuthController
                 "senha" => $_POST['senha'] ?? null
             ];
 
-            $response = AuthValidation::validationAllData($credencias);
+            $response = AuthValidation::validationAllData($credencias); //validando o email e senha
 
-            if(!empty($responses))
+            if(!empty($responses)) // resposta no caso de dados inválidos
             {
                 http_response_code(400);
                 echo json_encode(["mensages" => $response]);

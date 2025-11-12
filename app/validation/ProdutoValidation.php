@@ -67,7 +67,7 @@ class ProdutoValidation
                     $messages[] = "Esse produto já foi cadastrado";
                 }
         
-                    return !empty($messages) && isset($messages) ? $messages: null; // se não for vazio e existir retornar menssagem se não null
+                    return !empty($messages) && isset($messages) ? $messages : null; // se não for vazio e existir retornar menssagem se não null
     }
 
     private static function preco($preco)
@@ -86,7 +86,7 @@ class ProdutoValidation
                     $messages[] = "O campo Preço tem que ser tipo númerico no formato EX:(00,00, 0,00, 0.000,00)";
                 }
 
-                    return !empty($messages) && isset($messages) ? $messages: null; // se não for vazio e existir retornar menssagem se não null
+                    return !empty($messages) && isset($messages) ? $messages : null; // se não for vazio e existir retornar menssagem se não null
     }
 
     private static function quantidade($quantidade)
@@ -105,7 +105,7 @@ class ProdutoValidation
                   $messages[] = "O campo Quantidade tem que ser maior que 0"; 
                 }
 
-                    return !empty($messages) && isset($messages) ? $messages: null; // se não for vazio e existir retornar menssagem se não null
+                    return !empty($messages) && isset($messages) ? $messages : null; // se não for vazio e existir retornar menssagem se não null
 
     }
 
@@ -132,7 +132,7 @@ class ProdutoValidation
                         $messages[] = "O campo Quantidade minima tem que ser maior que 0"; 
                     }
 
-                        return !empty($messages) && isset($messages) ? $messages: null; // se não for vazio e existir retornar menssagem se não null 
+                        return !empty($messages) && isset($messages) ? $messages : null; // se não for vazio e existir retornar menssagem se não null 
 
     }
 
@@ -148,7 +148,7 @@ class ProdutoValidation
                 $messages[] = "A descrição tem que ser um texto"; // validação de tipo 
             }
         
-            return !empty($messages) && isset($messages) ? $messages: null; // se não for vazio e existir retornar menssagem se não null 
+            return !empty($messages) && isset($messages) ? $messages : null; // se não for vazio e existir retornar menssagem se não null 
     }
 
     private static function unidade_medida($unidade_medida)
@@ -159,7 +159,7 @@ class ProdutoValidation
             $messages[] = "O campo unidade de médida tem que ser no formato Ex(2,3cm, 3m, 20kg, 2l etc..)";
         }
 
-            return !empty($messages) && isset($messages) ? $messages: null; // se não for vazio e existir retornar menssagem se não null  
+            return !empty($messages) && isset($messages) ? $messages : null; // se não for vazio e existir retornar menssagem se não null  
     }
 
     private static function categoria_id($categoria_id)
@@ -172,16 +172,13 @@ class ProdutoValidation
             {
                 $messages[] = "O campo categoria precisar ser do tipo númerico";
             }
-                    elseif($categoria_id <= 0) // validação de intervalo
-                    {
-                        $messages[] = "O campo Categoria tem que ser maior que 0"; 
-                    }
-                        elseif(!ProdutoModel::isExistCategoria((int)$categoria_id)) // validação de Existência
-                        {
-                            $messages[] = "Essa Categoria não existe"; 
-                        }
+                   
+                elseif(!ProdutoModel::isExistCategoria((int)$categoria_id)) // validação de Existência
+                {
+                    $messages[] = "Essa Categoria não existe"; 
+                }
 
-                            return !empty($messages) && isset($messages) ? $messages: null; // se não for vazio e existir retornar menssagem se não null
+                    return !empty($messages) && isset($messages) ? $messages : null; // se não for vazio e existir retornar menssagem se não null
 
     }
 
@@ -196,18 +193,13 @@ class ProdutoValidation
             {
                 $messages[] = "O campo fornecedor precisar ser do tipo númerico";
             }
-                    elseif($fornecedor_id <= 0) // validação de intervalo
-                    {
-                        $messages[] = "O campo Fornecedor tem que ser maior que 0"; 
-                    }
-                        elseif(!ProdutoModel::isExistFornecedor((int)$fornecedor_id)) // validação de Existência
-                        {
-                            $messages[] = "Esse Fornecedor não existe"; 
-                        }
+                elseif(!ProdutoModel::isExistFornecedor((int)$fornecedor_id)) // validação de Existência
+                {
+                    $messages[] = "Esse Fornecedor não existe"; 
+                }
 
-                            return !empty($messages) && isset($messages) ? $messages: null; // se não for vazio e existir retornar menssagem se não null
+                    return !empty($messages) && isset($messages) ? $messages : null; // se não for vazio e existir retornar menssagem se não null
      
     }
 
-  
 }

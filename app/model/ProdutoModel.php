@@ -181,7 +181,7 @@ class ProdutoModel
             $stm->bindParam(':unidade_medida', $this->unidade_medida, PDO::PARAM_STR); // passando o parâmetro
             $stm->bindParam(':categoria_id', $this->categoria_id, PDO::PARAM_INT); // passando o parâmetro
             $stm->bindParam(':fornecedor_id', $this->fornecedor_id, PDO::PARAM_INT); // passando o parâmetro
-            $stm->bindValue(':usuario_id', 2, PDO::PARAM_INT); // passando o parâmetro
+            $stm->bindValue(':usuario_id', $_SESSION['Autenticado']['id'], PDO::PARAM_INT); // passando o parâmetro
             $stm->execute(); // Executa a query
 
 
@@ -397,6 +397,35 @@ class ProdutoModel
             $verificarFornecedor = $stm->fetch(PDO::FETCH_OBJ);
 
                 if(empty($verificarFornecedor))
+                {
+                    return false;
+                }
+                
+                return true;
+        }
+            catch(PDOException $e)
+            {
+               throw new Exception("error no banco de dados" . $e->getMessage());
+            }
+                finally 
+                {
+                    self::$conexao::closeConexao(); //fechando conexão
+                }
+    }
+
+    public static function isExistUsuario(int $usuario_id)
+    {
+        try
+        {
+ 
+            $sql = "SELECT id FROM user WHERE EXISTS(SELECT id FROM user WHERE id = :user_id)";
+            $stm = self::$conexao->Conexao()->prepare($sql);
+            $stm->bindParam(':user_id', $usuario_id, PDO::PARAM_INT);
+            $stm->execute();
+            
+            $verificarUsuario = $stm->fetch(PDO::FETCH_OBJ);
+
+                if(empty($verificarUsuario))
                 {
                     return false;
                 }
