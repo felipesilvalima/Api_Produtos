@@ -20,7 +20,7 @@ class AuthModel
         self::$conexao = new Conexao();
     }
 
-    public function Autentication(array $credencias)
+    public function Autentication($credencias)
     {
         try 
         {

@@ -20,26 +20,38 @@ class ProdutoController
     public function exibirProdutos()
     {
         try 
-        {
+        {   
+            $produtos = [];
 
-            $listaProdutos = $this->ProdutoModel->exibirTodosProdutos(); // Busca todos os produtos
             
-                if(!empty($listaProdutos)) 
-                {   
-                    http_response_code(200); // Código 200 OK
-                    echo json_encode([
-                        "status" => true,
-                        "datas" => $listaProdutos
-                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE); // Retorna lista de produtos em JSON
-                } 
-                    else 
-                    {
-                        http_response_code(404); // Código 404 se não houver produtos
+
+            if(isset($_GET['atributos']))// filtragem 
+            {
+                $atributos = $_GET['atributos'];
+                $produtos =  $this->ProdutoModel->SearchAttributes($atributos); // Busca atributos especificos
+
+            }
+                else
+                {
+                  $produtos =  $this->ProdutoModel->exibirTodosProdutos(); // Busca todos os produtos
+                }
+
+                    if(!empty($produtos)) 
+                    {   
+                        http_response_code(200); // Código 200 OK
                         echo json_encode([
-                            "status" => false,
-                            "mensagem" => "Nenhum Recurso encontrado",
-                        ]);  
-                    }         
+                            "status" => true,
+                            "datas" => $produtos
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE); // Retorna lista de produtos em JSON
+                    } 
+                        else 
+                        {
+                            http_response_code(404); // Código 404 se não houver produtos
+                            echo json_encode([
+                                "status" => false,
+                                "mensagem" => "Nenhum Recurso encontrado",
+                            ]);  
+                        }         
                     
         } 
             catch (PDOException $e) // error interno

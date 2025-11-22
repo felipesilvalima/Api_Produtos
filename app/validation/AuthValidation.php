@@ -4,7 +4,7 @@ namespace app\validation;
 
 class AuthValidation
 {
-    public static function validationAllData(array $credencias)
+    public static function validationAllData($credencias)
     {
         $messages = [];
 

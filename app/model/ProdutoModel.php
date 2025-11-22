@@ -2,6 +2,7 @@
 
 namespace app\model;
 
+use app\helpers\Attributes;
 use app\model\Conexao;
 use ErrorException;
 use Exception;
@@ -168,6 +169,8 @@ class ProdutoModel
             $this->unidade_medida = ucfirst(strtolower($request['unidade_medida'])) ?? null;
             $this->categoria_id = $request['categoria_id'] ?? 0;
             $this->fornecedor_id = $request['fornecedor_id'] ?? 0;
+            $this->usuario_id = $_SESSION['Autenticado']['id'];
+
 
             $sql = "INSERT INTO 
             produtos(produto,descricao,preco,quantidade_max,quantidade_min,unidade_medida,categoria_id,fornecedor_id,usuario_id)
@@ -181,7 +184,7 @@ class ProdutoModel
             $stm->bindParam(':unidade_medida', $this->unidade_medida, PDO::PARAM_STR); // passando o parâmetro
             $stm->bindParam(':categoria_id', $this->categoria_id, PDO::PARAM_INT); // passando o parâmetro
             $stm->bindParam(':fornecedor_id', $this->fornecedor_id, PDO::PARAM_INT); // passando o parâmetro
-            $stm->bindValue(':usuario_id', $_SESSION['Autenticado']['id'], PDO::PARAM_INT); // passando o parâmetro
+            $stm->bindValue(':usuario_id', (int)$this->usuario_id, PDO::PARAM_INT); // passando o parâmetro
             $stm->execute(); // Executa a query
 
 
@@ -216,6 +219,7 @@ class ProdutoModel
             $this->unidade_medida =  ucfirst(strtolower($request['unidade_medida'])) ?? null;
             $this->categoria_id = $request['categoria_id'] ?? 0;
             $this->fornecedor_id = $request['fornecedor_id'] ?? 0;
+            $this->usuario_id = $_SESSION['Autenticado']['id'];
 
             $sql = "UPDATE produtos
             SET produto=:produto, descricao=:descricao, preco=:preco, quantidade_max=:quantidade, quantidade_min=:quantidade_min, unidade_medida=:unidade_medida, categoria_id=:categoria_id, fornecedor_id=:fornecedor_id, usuario_id=:usuario_id WHERE id = :id"; // SQL para listar todos os produtos
@@ -229,7 +233,7 @@ class ProdutoModel
             $stm->bindParam(':unidade_medida', $this->unidade_medida, PDO::PARAM_STR); // passando o parâmetro
             $stm->bindParam(':categoria_id', $this->categoria_id, PDO::PARAM_INT); // passando o parâmetro
             $stm->bindParam(':fornecedor_id', $this->fornecedor_id, PDO::PARAM_INT); // passando o parâmetro
-            $stm->bindValue(':usuario_id', 2, PDO::PARAM_INT); // passando o parâmetro
+            $stm->bindValue(':usuario_id', (int)$this->usuario_id, PDO::PARAM_INT); // passando o parâmetro
             $stm->execute(); // Executa a query
 
             if($stm)
@@ -266,6 +270,7 @@ class ProdutoModel
             $this->unidade_medida =  isset($request['unidade_medida']) && !empty($request['unidade_medida']) ? ucfirst(strtolower($request['unidade_medida'])) : $values['unidade_medida'];
             $this->categoria_id =  isset($request['categoria_id']) && !empty($request['categoria_id']) ? $request['categoria_id'] : $values['categoria_id'];
             $this->fornecedor_id = isset($request['categofornecedor_idria_id']) && !empty($request['fornecedor_id']) ? $request['fornecedor_id'] : $values['fornecedor_id'];
+            $this->usuario_id = $_SESSION['Autenticado']['id'];
 
             $sql = "UPDATE produtos
             SET produto=:produto, descricao=:descricao, preco=:preco, quantidade_max=:quantidade, quantidade_min=:quantidade_min, unidade_medida=:unidade_medida, categoria_id=:categoria_id, fornecedor_id=:fornecedor_id, usuario_id=:usuario_id WHERE id = :id"; // SQL para listar todos os produtos
@@ -279,7 +284,7 @@ class ProdutoModel
             $stm->bindParam(':unidade_medida', $this->unidade_medida, PDO::PARAM_STR); // passando o parâmetro
             $stm->bindParam(':categoria_id', $this->categoria_id, PDO::PARAM_INT); // passando o parâmetro
             $stm->bindParam(':fornecedor_id', $this->fornecedor_id, PDO::PARAM_INT); // passando o parâmetro
-            $stm->bindValue(':usuario_id', 2, PDO::PARAM_INT); // passando o parâmetro
+            $stm->bindValue(':usuario_id', (int)$this->usuario_id, PDO::PARAM_INT); // passando o parâmetro
             $stm->execute(); // Executa a query
 
             if($stm)
@@ -472,4 +477,78 @@ class ProdutoModel
                 }
 
     }
+
+    public function SearchAttributes(string $atributos)
+    {
+        try 
+        {
+                   
+            $sql = Attributes::QueryFilter($atributos);               
+            $stm = self::$conexao->Conexao()->prepare($sql);  // Prepara a query
+            $stm->execute(); // Executa a query
+            
+            $lines = $stm->fetchall(PDO::FETCH_OBJ); // Pega o resultados como objetos
+
+            if(!$lines) // se não existir a linha retorne array vazio
+            {
+                return [];
+            }
+             
+                foreach ($lines as $line) 
+                {
+                    $categoria = [
+                            'id' => $line->c_id ?? null,
+                            'categoria' => $line->categoria ?? null,
+                            'descricao' => $line->c_desc ?? null,
+                    ];
+
+                    $fornecedor = [
+                            'id' => $line->for_id ?? null,
+                            'fornecedor' => $line->fornecedor ?? null,
+                            'cpf' => $line->cpf ?? null,
+                            'telefone' => $line->telefone ?? null,
+                            'endereco' => $line->endereco ?? null,
+                    ];
+
+                    
+                    $categoria = array_filter($categoria, fn($v) => is_null($v)) ? null : $categoria;
+                    $fornecedor = array_filter($fornecedor, fn($v) => is_null($v)) ? null : $fornecedor;
+                    
+                    
+
+                    $datas[] = [
+                        'id' => $line->id ?? null,
+                        'categoria_id' => $line->categoria_id ?? null,
+                        'fornecedor_id' => $line->fornecedor_id ?? null,
+                        'produto' => $line->produto ?? null,
+                        'preco' => $line->preco ??null,
+                        'quantidade' => $line->quantidade_max ?? null,
+                        'quantidade_min' => $line->quantidade_min ?? null,
+                        'descricao' => $line->descricao ?? null,
+                        'unidade_medida' => $line->unidade_medida ?? null,
+                        'categoria' => $categoria,
+                        'fornecedor' => $fornecedor,
+                        
+                    ];
+                }
+
+            
+                for ($i=0; $i < count($datas); $i++) 
+                { 
+                    $data[] = array_filter($datas[$i], fn($v) => !is_null($v));
+                }
+                
+        
+                return $data;  // Retorna o array de objeto
+        
+        } 
+            catch (PDOException $e) 
+            {
+                throw new Exception("error no banco de dados" . $e->getMessage()); // Lança exceção em caso de erro
+            }
+                finally 
+                {
+                    self::$conexao::closeConexao(); //fechando conexão
+                } 
+    } 
 }
