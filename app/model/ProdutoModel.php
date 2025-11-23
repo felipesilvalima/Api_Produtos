@@ -478,12 +478,12 @@ class ProdutoModel
 
     }
 
-    public function SearchAttributes(string $atributos)
+    public function filterAttributes(string $atributos,  string $atributos_categoria, string $atributos_fornecedor, string $filtro)
     {
         try 
         {
                    
-            $sql = Attributes::QueryFilter($atributos);               
+            $sql = Attributes::QueryFilter($atributos, $atributos_categoria, $atributos_fornecedor, $filtro);               
             $stm = self::$conexao->Conexao()->prepare($sql);  // Prepara a query
             $stm->execute(); // Executa a query
             
@@ -501,6 +501,7 @@ class ProdutoModel
                             'categoria' => $line->categoria ?? null,
                             'descricao' => $line->c_desc ?? null,
                     ];
+                    
 
                     $fornecedor = [
                             'id' => $line->for_id ?? null,
@@ -511,13 +512,15 @@ class ProdutoModel
                     ];
 
                     
-                    $categoria = array_filter($categoria, fn($v) => is_null($v)) ? null : $categoria;
-                    $fornecedor = array_filter($fornecedor, fn($v) => is_null($v)) ? null : $fornecedor;
+                    $categoriaFilter = array_filter($categoria, fn($v) => !is_null($v));
+                    $fornecedorFilter = array_filter($fornecedor, fn($v) => !is_null($v));
                     
+                    $categoria = empty($categoriaFilter) ? null : $categoriaFilter;
+                    $fornecedor = empty($fornecedorFilter) ? null : $fornecedorFilter;
                     
 
                     $datas[] = [
-                        'id' => $line->id ?? null,
+                        'id' => $line->prod_id ?? null,
                         'categoria_id' => $line->categoria_id ?? null,
                         'fornecedor_id' => $line->fornecedor_id ?? null,
                         'produto' => $line->produto ?? null,
@@ -532,6 +535,7 @@ class ProdutoModel
                     ];
                 }
 
+               
             
                 for ($i=0; $i < count($datas); $i++) 
                 { 

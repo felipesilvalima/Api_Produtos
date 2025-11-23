@@ -21,14 +21,16 @@ class ProdutoController
     {
         try 
         {   
-            $produtos = [];
-
-            
+            $produtos = [];    
 
             if(isset($_GET['atributos']))// filtragem 
             {
                 $atributos = $_GET['atributos'];
-                $produtos =  $this->ProdutoModel->SearchAttributes($atributos); // Busca atributos especificos
+                $atributos_categoria = $_GET['atributos_categoria'] ?? null;
+                $atributos_fornecedor = $_GET['atributos_fornecedor'] ?? null;
+                $filtro = $_GET['filtro'] ?? null;
+                
+                $produtos =  $this->ProdutoModel->filterAttributes((string)$atributos, (string)$atributos_categoria, (string)$atributos_fornecedor, (string)$filtro); // Busca atributos especificos
 
             }
                 else
