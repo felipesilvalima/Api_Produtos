@@ -4,6 +4,7 @@ namespace app\controller;
 
 use app\helpers\Methods;
 use app\model\ProdutoModel;
+use app\validation\AtributesValidation;
 use app\validation\ProdutoValidation;
 use Exception;
 use PDOException;
@@ -25,10 +26,20 @@ class ProdutoController
 
             if(isset($_GET['atributos']))// filtragem 
             {
+                
                 $atributos = $_GET['atributos'];
                 $atributos_categoria = $_GET['atributos_categoria'] ?? null;
                 $atributos_fornecedor = $_GET['atributos_fornecedor'] ?? null;
                 $filtro = $_GET['filtro'] ?? null;
+
+               $response = AtributesValidation::AttributesValidation((string)$atributos, (string)$atributos_categoria, (string)$atributos_fornecedor);
+
+               if($response != null)
+                {
+                    echo json_encode($response);
+                    die;
+                }
+            
                 
                 $produtos =  $this->ProdutoModel->filterAttributes((string)$atributos, (string)$atributos_categoria, (string)$atributos_fornecedor, (string)$filtro); // Busca atributos especificos
 

@@ -12,6 +12,7 @@ class Attributes
         $condicao = isset($filtro[0], $filtro[1]) ?  "WHERE " . $filtro[0]  . $filtro[1] : '';
         $condicao = $condicao === "WHERE " ? '' : $condicao;
         $valor = $filtro[2] ?? '';
+        $id_Produto = '';
         
                 $categoria_id = in_array( "categoria_id",$verifyRelacionamento) ? 'categoria_id' : null;
                 $fornecedor_id =   in_array( "fornecedor_id",$verifyRelacionamento) ? 'fornecedor_id' : null;
@@ -34,33 +35,35 @@ class Attributes
                             {
                                 if($p === "id")
                                 {
-                                    $id_Produto =  ",P.". $p. " AS prod_id," ?? ''; 
+                                    $id_Produto =  "P.". $p. " AS prod_id" ?? ''; 
                                 }
                             }
                         }
+                       
+                        $atributos =  trim(preg_replace('/(?:^|,)\s*id\s*(?=,|$)/i', '', $atributos ?? ''));
+                        $atributos_produto = $atributos . "," .$id_Produto;
+                        $atributos_produto = empty($atributos) ? $id_Produto : $atributos_produto;         
                         
-                        $atributos =  trim(preg_replace('/\bid,\b/i', '', $atributos ?? ''));
-            
                 if(!empty($param_relacionamento) && empty($atributos_categoria))
                 {
                      
                     $sql = match($param_relacionamento) 
                     {
-                        "categoria_id" => "SELECT P.$atributos $id_Produto C.categoria,C.descricao AS c_desc
-                        FROM Produtos P INNER JOIN categoria C ON P.categoria_id = C.id $condicao '$valor'",
+                        "categoria_id" => "SELECT P.$atributos $id_Produto, C.categoria,C.descricao AS c_desc
+                        FROM Produtos P INNER JOIN categoria C ON P.categoria_id = C.id $condicao $valor",
     
-                        'fornecedor_id' => "SELECT P.$atributos $id_Produto
+                        'fornecedor_id' => "SELECT P.$atributos $id_Produto,
                             F.id AS for_id, F.fornecedor, F.cpf,F.telefone, F.endereco 
-                            FROM Produtos P INNER JOIN fornecedor F ON P.fornecedor_id = F.id $condicao '$valor'",
+                            FROM Produtos P INNER JOIN fornecedor F ON P.fornecedor_id = F.id $condicao $valor",
     
-                        'relacionamentoAll' => "SELECT P.$atributos $id_Produto
+                        'relacionamentoAll' => "SELECT P.$atributos $id_Produto,
                                 C.id AS c_id,C.categoria,C.descricao AS c_desc,
                                 F.id AS for_id, F.fornecedor, F.cpf,F.telefone, F.endereco 
-                                FROM Produtos P INNER JOIN categoria C ON P.categoria_id = C.id INNER JOIN fornecedor F ON P.fornecedor_id = F.id $condicao '$valor'",
+                                FROM Produtos P INNER JOIN categoria C ON P.categoria_id = C.id INNER JOIN fornecedor F ON P.fornecedor_id = F.id $condicao $valor",
     
-                        'produtos' => "SELECT $atributos FROM Produtos $condicao '$valor'"
+                        'produtos' => "SELECT $atributos_produto FROM Produtos P $condicao $valor"
                     };
-                   
+                 
 
                 }
                     elseif(!empty($atributos) && !empty($atributos_categoria) || !empty($atributos_fornecedor))
@@ -78,11 +81,11 @@ class Attributes
                             {
                                if($c === "descricao" )
                                 {
-                                   $descricao = ",C.". $c. " AS c_desc" ?? '';
+                                   $descricao = "C.". $c. " AS c_desc" ?? '';
                                 }
                                     elseif($c === "id")
                                     {
-                                        $id_Categoria = ",C.". $c. " AS c_id" ?? ''; 
+                                        $id_Categoria = "C.". $c. " AS c_id" ?? ''; 
                                     }
                             }
                            
@@ -97,25 +100,31 @@ class Attributes
                             {
                                 if($f === "id")
                                 {
-                                    $id_Fornecedor =  ",F.". $f. " AS for_id," ?? ''; 
+                                    $id_Fornecedor =  "F.". $f. " AS for_id" ?? ''; 
                                 }
                             }
                         }
                         
-                        $atributos_fornecedor =  trim(preg_replace('/\bid,\b/i', '', $atributos_fornecedor ?? ''));
+                        $atributos_fornecedor =  trim(preg_replace('/(?:^|,)\s*id\s*(?=,|$)/i', '', $atributos_fornecedor ?? ''));
 
-                        $atributos_fornecedor = ",F.". $atributos_fornecedor;
-                        $atributos_fornecedor = $atributos_fornecedor === ",F." ? '' : $atributos_fornecedor;
+                        $atributos_fornecedor = "F.". $atributos_fornecedor;
+                        $atributos_fornecedor = $atributos_fornecedor === "F." ? '' : $atributos_fornecedor;
                         
+                        $select = "P.$atributos ,$id_Produto ,C.$atributos_categoria ,$descricao ,$id_Categoria ,$id_Fornecedor ,$atributos_fornecedor";
+                        $select = preg_replace('/\s*,\s*(?=,)/', '', $select);
+                        $select = preg_replace('/,+/', ',', $select);
+                        $select = preg_replace('/(^,|,$)/', '', $select);
+                        $select = trim(preg_replace('/\s*,\s*/', ', ', $select));
+
                         
-                        $sql = "SELECT P.$atributos $id_Produto C.$atributos_categoria $descricao $id_Categoria $id_Fornecedor $atributos_fornecedor
+                        $sql = "SELECT $select
                         FROM Produtos P 
                         INNER JOIN categoria C ON P.categoria_id = C.id
                         LEFT JOIN fornecedor F ON P.fornecedor_id = F.id
                         $condicao $valor";
   
                     }
-                   
+               
                         return $sql;
     }
 }
