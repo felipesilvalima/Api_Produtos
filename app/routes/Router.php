@@ -43,6 +43,7 @@ class Router
             case '/logout':
               if($method === 'POST')
               {
+                 AuthMiddleware::Headles();
                 $autenticacao->Logout();
                 die;
               }
@@ -50,6 +51,7 @@ class Router
             case '/refresh':
               if($method === 'GET')
               {
+                 AuthMiddleware::Headles();
                 $autenticacao->Refresh();
                 die;
               }
@@ -57,6 +59,7 @@ class Router
             case '/me':
               if($method === 'GET')
               {
+                 AuthMiddleware::Headles();
                 $autenticacao->Me();
                 die;
               }

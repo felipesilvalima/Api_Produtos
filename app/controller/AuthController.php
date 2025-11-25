@@ -2,6 +2,7 @@
 
 namespace app\controller;
 
+use app\middleware\AuthMiddleware;
 use app\model\AuthModel;
 use app\validation\AuthValidation;
 use PDOException;
@@ -37,7 +38,7 @@ class AuthController
 
             if($user) // se autenticação for verdadeira
             {
-                $token = AuthModel::generateToken($_SESSION['Autenticado']); // gerar token
+                $token = AuthModel::generateToken($user); // gerar token
                 
                 http_response_code(200);
                 echo json_encode([ // saida
@@ -69,46 +70,54 @@ class AuthController
     
     public function Logout()
     {
-        session_start(); // start na sessao
-        session_reset(); // limpando a sessao
-        session_destroy(); // destruindo a sessao
-
-        if(!isset($_SESSION['Autenticado']))
-        {
-            echo json_encode(["mensagem" => "Usuário não está Autenticado"],JSON_UNESCAPED_UNICODE);
-            die;
-        }
-            
-            http_response_code(200);
-            echo json_encode(["mensagem" => "Sessão Encerrada"],JSON_UNESCAPED_UNICODE);
-
+        require_once __DIR__ .'/../helpers/blackList.php';
+        
+        $headers = getallheaders(); // pegando os headers;
+        $tokenJWT = trim(preg_replace('/^Bearer\s*/i', '', $headers['Authorization'] ?? '')); // pegando o token limpo 
+        BlackList($tokenJWT);
     }
 
     public function Me()
     {
-        session_start(); // start na sessao
+       $user_info = AuthMiddleware::$user_info;
         
-        if(isset($_SESSION['Autenticado']) && !empty($_SESSION['Autenticado'])) // verificando se exister a sessao de autenticação e se ela está vazia
+        if(isset($user_info) && $user_info != null) // verificando se exister a sessao de autenticação
         {
-            http_response_code(200);
-            echo json_encode(["data" => $_SESSION['Autenticado']], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            $usuario = $this->AuthModel->BuscarUsuario((int)$user_info->uid);
+
+            if($usuario)
+            {
+                http_response_code(200);
+                echo json_encode(["Usuário" => $usuario]);
+            }
+                else
+                {
+                    http_response_code(404);
+                    echo json_encode(["error" => "Usuário não encontrado"]);
+                }
+
         }
             else // se não tiver autenticado
             {
-                 http_response_code(403);
+                http_response_code(403);
                 echo json_encode(["mensagem" => "Usuário não está Autenticado"],JSON_UNESCAPED_UNICODE);
             }
     }
 
     public function Refresh()
     {
-        session_start(); // start na sessao
-
-        if(isset($_SESSION['Autenticado'])) // verificando se exister a sessao de autenticação
+        $user_info = AuthMiddleware::$user_info;
+        
+        if(isset($user_info) && $user_info != null) // verificando se exister a sessao de autenticação
         {
-            $token = AuthModel::generateToken($_SESSION['Autenticado']); // gerando um novo token
+            
+            $user = [
+                "id" => $user_info->uid,
+                "nome" => $user_info->nome
+            ];  
+ 
+            $token = AuthModel::generateToken($user); // gerando um novo token
 
-            $_SESSION['TotalRefresh'] = 1; // após refresh outro token vai ser inválido
 
             http_response_code(200);
             echo json_encode(["token Renovado" => $token]);

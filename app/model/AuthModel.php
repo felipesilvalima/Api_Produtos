@@ -24,8 +24,6 @@ class AuthModel
     {
         try 
         {
-            session_start(); // inciando sessão
-
             //atributos recebendo as credencias
             $this->email = $credencias['email'] ?? null; 
             $this->password = $credencias['senha'] ?? null;
@@ -47,8 +45,7 @@ class AuthModel
                             "email" => $data->email
                         ];
 
-                        $_SESSION['Autenticado'] = $datas; // criando sessao
-                        return true;
+                        return $datas;
                     }
                         else // senha inválida
                         {
@@ -77,7 +74,7 @@ class AuthModel
     {
         try 
         { 
-
+           
            // Dados do usuário autenticado
             $idUser = $user['id']; 
             $name = $user['nome'];
@@ -97,5 +94,28 @@ class AuthModel
             {
                throw new Exception("Erro ao gerar token:" . $e->getMessage());
             }
+    }
+
+    public function BuscarUsuario(int $id)
+    {
+        try
+        {
+
+            $sql = "SELECT id, name, email FROM user WHERE id = :id";
+      
+              $stm = self::$conexao->Conexao()->prepare($sql);
+              $stm->bindParam(':id', $id, PDO::PARAM_INT);
+              $stm->execute();
+    
+              $usuario = $stm->fetch(PDO::FETCH_OBJ); 
+            
+                return $usuario;
+             
+        }
+            catch(PDOException $e)
+            {
+                throw new Exception("error no banco de dados (BuscarUsuario) " . $e->getMessage());
+            }
+            
     }
 }
