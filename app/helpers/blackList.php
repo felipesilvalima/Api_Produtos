@@ -1,18 +1,30 @@
 <?php declare(strict_types=1);
 
-function BlackList(?string $token= null)
+namespace app\helpers;
+
+session_start();
+class BlackList
 {
-    $blacklist = [];
 
-    if (in_array($token, $blacklist)) 
+    public static function BlackList(?string $token = null)
     {
-        http_response_code(401);
-        echo json_encode([
-            "status" => false,
-            "mensagem" => "Token inválido!"
-        ]);
-        die; 
+        $_SESSION['blacklist'][] = $token;
     }
-    $blacklist[] = $token;
-
+    
+    public static function verifyToken($token)
+    {
+       
+        if (in_array($token, $_SESSION['blacklist'] ?? []) && $token != null) 
+        {
+            http_response_code(401);
+            echo json_encode([
+                "status" => false,
+                "mensagem" => "Token inválido!"
+            ]);
+            die; 
+        }
+       
+    
+    }
 }
+

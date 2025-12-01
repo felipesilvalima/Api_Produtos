@@ -43,9 +43,8 @@ class Router
             case '/logout':
               if($method === 'POST')
               {
-                 AuthMiddleware::Headles();
                 $autenticacao->Logout();
-                die;
+                die; 
               }
               break;
             case '/refresh':
@@ -53,7 +52,7 @@ class Router
               {
                  AuthMiddleware::Headles();
                 $autenticacao->Refresh();
-                die;
+                die; 
               }
               break;
             case '/me':

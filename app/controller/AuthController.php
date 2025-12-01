@@ -2,6 +2,7 @@
 
 namespace app\controller;
 
+use app\helpers\BlackList;
 use app\middleware\AuthMiddleware;
 use app\model\AuthModel;
 use app\validation\AuthValidation;
@@ -74,7 +75,9 @@ class AuthController
         
         $headers = getallheaders(); // pegando os headers;
         $tokenJWT = trim(preg_replace('/^Bearer\s*/i', '', $headers['Authorization'] ?? '')); // pegando o token limpo 
-        BlackList($tokenJWT);
+        BlackList::BlackList($tokenJWT);
+        http_response_code(200);
+
     }
 
     public function Me()

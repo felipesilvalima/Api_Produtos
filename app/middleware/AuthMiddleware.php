@@ -2,6 +2,7 @@
 
 namespace app\middleware;
 
+use app\helpers\BlackList;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use PDOException;
@@ -31,11 +32,11 @@ class AuthMiddleware
                     die;
                 }
 
-                BlackList();
+                BlackList::verifyToken($tokenJWT);
 
             // Decodificar e validar token
             $dados = JWT::decode($tokenJWT, new Key($_ENV['API_KEY'], 'HS256'));
-            AuthMiddleware::$user_info = $dados;
+            self::$user_info = $dados;
                
         }
             catch (\Firebase\JWT\ExpiredException) 
