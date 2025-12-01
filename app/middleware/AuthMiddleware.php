@@ -2,12 +2,11 @@
 
 namespace app\middleware;
 
-use app\helpers\BlackList;
+use app\model\AuthModel;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use PDOException;
 
-require_once __DIR__ .'/../helpers/blackList.php';
 require_once __DIR__. '/../../config/env.php';
 class AuthMiddleware
 {
@@ -32,7 +31,15 @@ class AuthMiddleware
                     die;
                 }
 
-                BlackList::verifyToken($tokenJWT);
+                if(AuthModel::VerifyToken($tokenJWT))
+                {
+                    http_response_code(401);
+                    echo json_encode([
+                        "status" => false,
+                        "mensagem" => "Token inválido"
+                    ]);
+                    die;
+                }
 
             // Decodificar e validar token
             $dados = JWT::decode($tokenJWT, new Key($_ENV['API_KEY'], 'HS256'));

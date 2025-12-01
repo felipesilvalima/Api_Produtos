@@ -118,4 +118,55 @@ class AuthModel
             }
             
     }
+
+
+    public static function BlackList(string $token)
+    {
+        try
+        {
+
+            $sql = "INSERT INTO blacklisted_tokens(token) VALUES (:token)";
+      
+              $stm = self::$conexao->Conexao()->prepare($sql);
+              $stm->bindParam(':token', $token, PDO::PARAM_STR);
+              $stm->execute();
+              
+                if($stm)
+                {
+                    return true;
+                }
+                
+                    return false;
+             
+        }
+            catch(PDOException $e)
+            {
+                throw new Exception("error no banco de dados (BlackList) " . $e->getMessage());
+            }
+    }
+
+    public static function VerifyToken(string $token)
+    {
+        try
+        {
+
+            $sql = "SELECT token FROM blacklisted_tokens WHERE token = :token";
+      
+              $stm = self::$conexao->Conexao()->prepare($sql);
+              $stm->bindParam(':token', $token, PDO::PARAM_STR);
+              $stm->execute();
+              
+                if($stm->rowCount() > 0)
+                {
+                    return true;
+                }
+
+                    return false;
+             
+        }
+            catch(PDOException $e)
+            {
+                throw new Exception("error no banco de dados (VerifyToken) " . $e->getMessage());
+            }
+    }
 }

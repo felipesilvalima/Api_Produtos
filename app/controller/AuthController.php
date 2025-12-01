@@ -2,7 +2,6 @@
 
 namespace app\controller;
 
-use app\helpers\BlackList;
 use app\middleware\AuthMiddleware;
 use app\model\AuthModel;
 use app\validation\AuthValidation;
@@ -71,11 +70,9 @@ class AuthController
     
     public function Logout()
     {
-        require_once __DIR__ .'/../helpers/blackList.php';
-        
         $headers = getallheaders(); // pegando os headers;
         $tokenJWT = trim(preg_replace('/^Bearer\s*/i', '', $headers['Authorization'] ?? '')); // pegando o token limpo 
-        BlackList::BlackList($tokenJWT);
+        AuthModel::BlackList($tokenJWT);
         http_response_code(200);
 
     }
