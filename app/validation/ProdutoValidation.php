@@ -173,7 +173,7 @@ class ProdutoValidation
                 $messages[] = "O campo categoria precisar ser do tipo númerico";
             }
                    
-                elseif(!ProdutoModel::isExistCategoria((int)$categoria_id)) // validação de Existência
+                elseif(!ProdutoModel::isExistAtributte((int)$categoria_id, "id", "categoria")) // validação de Existência
                 {
                     $messages[] = "Essa Categoria não existe"; 
                 }
@@ -193,7 +193,7 @@ class ProdutoValidation
             {
                 $messages[] = "O campo fornecedor precisar ser do tipo númerico";
             }
-                elseif(!ProdutoModel::isExistFornecedor((int)$fornecedor_id)) // validação de Existência
+                elseif(!ProdutoModel::isExistAtributte((int)$fornecedor_id,"id","fornecedor")) // validação de Existência
                 {
                     $messages[] = "Esse Fornecedor não existe"; 
                 }

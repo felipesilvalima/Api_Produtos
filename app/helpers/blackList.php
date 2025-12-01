@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-function BlackList(string $token)
+function BlackList(?string $token= null)
 {
-    $blacklist[] = $token;
+    $blacklist = [];
 
     if (in_array($token, $blacklist)) 
     {
@@ -13,4 +13,6 @@ function BlackList(string $token)
         ]);
         die; 
     }
+    $blacklist[] = $token;
+
 }

@@ -3,6 +3,7 @@
 namespace app\model;
 
 use app\helpers\Attributes;
+use app\middleware\AuthMiddleware;
 use app\model\Conexao;
 use ErrorException;
 use Exception;
@@ -169,8 +170,8 @@ class ProdutoModel
             $this->unidade_medida = ucfirst(strtolower($request['unidade_medida'])) ?? null;
             $this->categoria_id = $request['categoria_id'] ?? 0;
             $this->fornecedor_id = $request['fornecedor_id'] ?? 0;
-            $this->usuario_id = $_SESSION['Autenticado']['id'];
-
+            $this->usuario_id =  AuthMiddleware::$user_info->uid;
+            
 
             $sql = "INSERT INTO 
             produtos(produto,descricao,preco,quantidade_max,quantidade_min,unidade_medida,categoria_id,fornecedor_id,usuario_id)
@@ -219,7 +220,7 @@ class ProdutoModel
             $this->unidade_medida =  ucfirst(strtolower($request['unidade_medida'])) ?? null;
             $this->categoria_id = $request['categoria_id'] ?? 0;
             $this->fornecedor_id = $request['fornecedor_id'] ?? 0;
-            $this->usuario_id = $_SESSION['Autenticado']['id'];
+            $this->usuario_id =  AuthMiddleware::$user_info->uid;
 
             $sql = "UPDATE produtos
             SET produto=:produto, descricao=:descricao, preco=:preco, quantidade_max=:quantidade, quantidade_min=:quantidade_min, unidade_medida=:unidade_medida, categoria_id=:categoria_id, fornecedor_id=:fornecedor_id, usuario_id=:usuario_id WHERE id = :id"; // SQL para listar todos os produtos
@@ -270,7 +271,7 @@ class ProdutoModel
             $this->unidade_medida =  isset($request['unidade_medida']) && !empty($request['unidade_medida']) ? ucfirst(strtolower($request['unidade_medida'])) : $values['unidade_medida'];
             $this->categoria_id =  isset($request['categoria_id']) && !empty($request['categoria_id']) ? $request['categoria_id'] : $values['categoria_id'];
             $this->fornecedor_id = isset($request['categofornecedor_idria_id']) && !empty($request['fornecedor_id']) ? $request['fornecedor_id'] : $values['fornecedor_id'];
-            $this->usuario_id = $_SESSION['Autenticado']['id'];
+            $this->usuario_id =  AuthMiddleware::$user_info->uid;
 
             $sql = "UPDATE produtos
             SET produto=:produto, descricao=:descricao, preco=:preco, quantidade_max=:quantidade, quantidade_min=:quantidade_min, unidade_medida=:unidade_medida, categoria_id=:categoria_id, fornecedor_id=:fornecedor_id, usuario_id=:usuario_id WHERE id = :id"; // SQL para listar todos os produtos
@@ -361,13 +362,13 @@ class ProdutoModel
                 }
     }
 
-    public static function isExistCategoria(int $categoria_id)
+    public static function isExistAtributte(int $value,string $atributo, string $table)
     {
         try
         {
-            $sql = "SELECT id FROM categoria WHERE EXISTS(SELECT id FROM categoria WHERE id = :categoria_id)";
+            $sql = "SELECT id FROM $table WHERE $atributo = :value";
             $stm = self::$conexao->Conexao()->prepare($sql);
-            $stm->bindParam(':categoria_id', $categoria_id, PDO::PARAM_INT);
+            $stm->bindParam(':value', $value);
             $stm->execute(); 
 
             $verificarCategoria = $stm->fetch(PDO::FETCH_OBJ);
@@ -389,95 +390,6 @@ class ProdutoModel
                 }
     }
     
-    public static function isExistFornecedor(int $fornecedor_id)
-    {
-        try
-        {
- 
-            $sql = "SELECT id FROM fornecedor WHERE EXISTS(SELECT id FROM fornecedor WHERE id = :fornecedor_id)";
-            $stm = self::$conexao->Conexao()->prepare($sql);
-            $stm->bindParam(':fornecedor_id', $fornecedor_id, PDO::PARAM_INT);
-            $stm->execute();
-            
-            $verificarFornecedor = $stm->fetch(PDO::FETCH_OBJ);
-
-                if(empty($verificarFornecedor))
-                {
-                    return false;
-                }
-                
-                return true;
-        }
-            catch(PDOException $e)
-            {
-               throw new Exception("error no banco de dados" . $e->getMessage());
-            }
-                finally 
-                {
-                    self::$conexao::closeConexao(); //fechando conexão
-                }
-    }
-
-    public static function isExistUsuario(int $usuario_id)
-    {
-        try
-        {
- 
-            $sql = "SELECT id FROM user WHERE EXISTS(SELECT id FROM user WHERE id = :user_id)";
-            $stm = self::$conexao->Conexao()->prepare($sql);
-            $stm->bindParam(':user_id', $usuario_id, PDO::PARAM_INT);
-            $stm->execute();
-            
-            $verificarUsuario = $stm->fetch(PDO::FETCH_OBJ);
-
-                if(empty($verificarUsuario))
-                {
-                    return false;
-                }
-                
-                return true;
-        }
-            catch(PDOException $e)
-            {
-               throw new Exception("error no banco de dados" . $e->getMessage());
-            }
-                finally 
-                {
-                    self::$conexao::closeConexao(); //fechando conexão
-                }
-    }
-        
-    public static function isExistID(int $id)
-    {
-        try
-        {
-
-            $sql = "SELECT id FROM produtos WHERE EXISTS(SELECT id FROM produtos WHERE id = :id)";
-    
-            $stm = self::$conexao->Conexao()->prepare($sql);
-            $stm->bindParam(':id', $id, PDO::PARAM_INT);
-            $stm->execute();
-
-            $verificarID = $stm->fetch(PDO::FETCH_OBJ); 
-            
-            if(empty($verificarID))
-            {
-                return false;
-            }
-    
-            return true;
-        } 
-            catch(PDOException $e)
-            {
-                throw new Exception("error no banco de dados" . $e->getMessage());
-            }
-                finally 
-                {
-                    self::$conexao::closeConexao(); //fechando conexão
-                }
-
-    }
-
     public function filterAttributes(string $atributos,  string $atributos_categoria, string $atributos_fornecedor, string $filtro)
     {
         try 

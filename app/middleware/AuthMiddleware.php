@@ -31,7 +31,7 @@ class AuthMiddleware
                     die;
                 }
 
-                BlackList($tokenJWT);
+                BlackList();
 
             // Decodificar e validar token
             $dados = JWT::decode($tokenJWT, new Key($_ENV['API_KEY'], 'HS256'));

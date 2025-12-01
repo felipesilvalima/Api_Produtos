@@ -83,7 +83,7 @@ class ProdutoController
             if(isset($id))
             {
 
-                if(!$this->ProdutoModel->isExistID($id))
+                if(!ProdutoModel::isExistAtributte($id,"id","produtos"))
                 {
                     http_response_code(404);
                     echo json_encode(["error" => "Recurso não encontrado"]);
@@ -185,7 +185,7 @@ class ProdutoController
 
                 is_array($request) ? $request = ["id" => $id] + $request : null; // se request e um array adiciono uma chave com valor do id em request
                 
-                if(!$this->ProdutoModel->isExistID($id)) // verificando se existir o recurso solicitado
+                if(!ProdutoModel::isExistAtributte($id,"id","produtos")) // verificando se existir o recurso solicitado
                 {
                     http_response_code(404);
                     echo json_encode(["error" => "Impossivel realizar atualização. O recurso solicitado não existe"]);
@@ -300,7 +300,7 @@ class ProdutoController
             if(isset($id))
             {
                 
-                if(!$this->ProdutoModel->isExistID($id))  // verificando se existir o recurso solicitado
+                if(!ProdutoModel::isExistAtributte($id,"id","produtos"))  // verificando se existir o recurso solicitado
                 {
                     http_response_code(404);
                     echo json_encode(["error" => "Impossivel realizar Remoção. O recurso solicitado não existe"]);
