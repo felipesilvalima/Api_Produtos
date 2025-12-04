@@ -19,11 +19,21 @@ class AuthController
     public function Login()
     {
        try 
-       {
-            $credencias = [ // pegando a requisição
+       {    
+            $json = file_get_contents('php://input'); // pegando a requisição json 
+            $dataDecode = json_decode($json); // decodificando a requisição
+
+            $dataHtml = [ // pegando a requisição html 
                 "email" => $_POST['email'] ?? null,
                 "senha" => $_POST['senha'] ?? null
             ];
+
+            $dataJson = [ // requisição json decodificada
+                "email" => $dataDecode->email ?? null,
+                "senha" => $dataDecode->senha ?? null
+            ];
+
+            $credencias = array_filter($dataHtml, fn($data) => is_null($data) ) ? $dataJson : $dataHtml;
 
             $response = AuthValidation::validationAllData($credencias); //validando o email e senha
 
