@@ -3,6 +3,7 @@
 namespace app\middleware;
 
 use app\model\AuthModel;
+use app\model\ProdutoModel;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use PDOException;
@@ -31,7 +32,7 @@ class AuthMiddleware
                     die;
                 }
 
-                if(AuthModel::VerifyToken($tokenJWT))
+                if(AuthModel::VerifyToken_blackList($tokenJWT))
                 {
                     http_response_code(401);
                     echo json_encode([
@@ -43,6 +44,17 @@ class AuthMiddleware
 
             // Decodificar e validar token
             $dados = JWT::decode($tokenJWT, new Key($_ENV['API_KEY'], 'HS256'));
+
+            if(!ProdutoModel::isExistAtributte($dados->uid,"id","user"))
+            {
+               http_response_code(401);
+                echo json_encode([
+                    "status" => false,
+                    "mensagem" => "Acesso inválido"
+                ]);
+                die; 
+            }
+
             self::$user_info = $dados;
                
         }

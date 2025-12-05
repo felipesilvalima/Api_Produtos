@@ -145,7 +145,7 @@ class AuthModel
             }
     }
 
-    public static function VerifyToken(string $token)
+    public static function VerifyToken_blackList(string $token)
     {
         try
         {
@@ -166,7 +166,7 @@ class AuthModel
         }
             catch(PDOException $e)
             {
-                throw new Exception("error no banco de dados (VerifyToken) " . $e->getMessage());
+                throw new Exception("error no banco de dados (VerifyToken_blackList) " . $e->getMessage());
             }
     }
 }
