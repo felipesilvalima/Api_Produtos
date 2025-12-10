@@ -2,11 +2,8 @@
 
 namespace app\routes;
 
-use app\controller\AuthController;
-use app\controller\ProdutoController;
 use app\middleware\AuthMiddleware;
 use PDOException;
-
 class Router
 {
 
@@ -23,8 +20,7 @@ class Router
               die;
           }
 
-          $autenticacao = new AuthController(); // criando a instacia de produto
-          $produtoController = new ProdutoController(); // criando a instacia de produto
+          require_once __DIR__.'/../bootstrap/index.php'; //objeto dos controlladores
          
           $request = $_SERVER['REQUEST_URI']; // Captura a URL
 
@@ -36,14 +32,14 @@ class Router
             case '/login':
               if($method === 'POST')
               {
-                $autenticacao->Login();
+                $AuthController->Login();
                 die;
               }
               break;
             case '/logout':
               if($method === 'POST')
               {
-                $autenticacao->Logout();
+                $AuthController->Logout();
                 die; 
               }
               break;
@@ -51,7 +47,7 @@ class Router
               if($method === 'GET')
               {
                  AuthMiddleware::Headles();
-                $autenticacao->Refresh();
+                $AuthController->Refresh();
                 die; 
               }
               break;
@@ -59,7 +55,7 @@ class Router
               if($method === 'GET')
               {
                  AuthMiddleware::Headles();
-                $autenticacao->Me();
+                $AuthController->Me();
                 die;
               }
               break;

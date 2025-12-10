@@ -10,22 +10,22 @@ class Conexao
 {
     private static $conexao = null;
 
-    public function Conexao()
+    public static function Conexao()
     { 
         try 
         {
-            if(!self::$conexao || self::$conexao == null)
+            if(!self::$conexao || self::$conexao === null)
             {
-                $conexao = new PDO(
+                self::$conexao = new PDO(
                     "mysql:host=" . $_ENV['DB_HOST'] . ";dbname=" . $_ENV['DB_NAME'],
                     $_ENV['DB_USER'],      // usuário do banco
                     $_ENV['DB_PASS']   // senha do banco
                 ); // Cria a conexão PDO
     
-                $conexao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Configura para lançar exceções
+                self::$conexao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Configura para lançar exceções
             }
 
-            return $conexao; // Retorna a conexão
+            return self::$conexao; // Retorna a conexão
         } 
             catch (PDOException $e) 
             {
@@ -37,7 +37,6 @@ class Conexao
     {
         if(self::$conexao && !self::$conexao == null)
         {
-            self::$conexao->close();
             self::$conexao = null; 
         }
     }

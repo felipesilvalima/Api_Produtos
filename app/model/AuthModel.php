@@ -1,13 +1,11 @@
 <?php declare(strict_types=1); 
 
 namespace app\model;
-use app\model\Conexao;
 use Exception;
 use Firebase\JWT\JWT;
 use PDO;
 use PDOException;
 
-require_once __DIR__. '/../../config/env.php';
 class AuthModel
 {
     
@@ -15,9 +13,9 @@ class AuthModel
     private string  $email;
     private string $password;
 
-    public function __construct()
+    public function __construct($db)
     {
-        self::$conexao = new Conexao();
+        self::$conexao = $db;
     }
 
     public function Autentication($credencias)
@@ -29,7 +27,7 @@ class AuthModel
             $this->password = $credencias['senha'] ?? null;
 
             $sql = "SELECT * FROM user WHERE email = :email"; // sql
-            $stm = self::$conexao->Conexao()->prepare($sql); // preparando sql
+            $stm = self::$conexao->prepare($sql); // preparando sql
             $stm->bindParam(':email',$this->email, PDO::PARAM_STR); //passando pârametro
             $stm->execute(); // executando sql
     
@@ -65,7 +63,7 @@ class AuthModel
             }
                 finally
                 {
-                    self::$conexao::closeConexao(); // fechar conexao
+                    Conexao::closeConexao(); // fechar conexao
                 }
         
     }
@@ -103,7 +101,7 @@ class AuthModel
 
             $sql = "SELECT id, name, email FROM user WHERE id = :id";
       
-              $stm = self::$conexao->Conexao()->prepare($sql);
+              $stm = self::$conexao->prepare($sql);
               $stm->bindParam(':id', $id, PDO::PARAM_INT);
               $stm->execute();
     
@@ -116,6 +114,10 @@ class AuthModel
             {
                 throw new Exception("error no banco de dados (BuscarUsuario) " . $e->getMessage());
             }
+                finally
+                {
+                    Conexao::closeConexao();
+                }
             
     }
 
@@ -127,7 +129,7 @@ class AuthModel
 
             $sql = "INSERT INTO blacklisted_tokens(token) VALUES (:token)";
       
-              $stm = self::$conexao->Conexao()->prepare($sql);
+              $stm = self::$conexao->prepare($sql);
               $stm->bindParam(':token', $token, PDO::PARAM_STR);
               $stm->execute();
               
@@ -143,6 +145,10 @@ class AuthModel
             {
                 throw new Exception("error no banco de dados (BlackList) " . $e->getMessage());
             }
+                finally
+                {
+                    Conexao::closeConexao();
+                }
     }
 
     public static function VerifyToken_blackList(string $token)
@@ -152,7 +158,7 @@ class AuthModel
 
             $sql = "SELECT token FROM blacklisted_tokens WHERE token = :token";
       
-              $stm = self::$conexao->Conexao()->prepare($sql);
+              $stm = self::$conexao->prepare($sql);
               $stm->bindParam(':token', $token, PDO::PARAM_STR);
               $stm->execute();
               
@@ -168,5 +174,9 @@ class AuthModel
             {
                 throw new Exception("error no banco de dados (VerifyToken_blackList) " . $e->getMessage());
             }
+                finally
+                {
+                    Conexao::closeConexao();
+                }
     }
 }

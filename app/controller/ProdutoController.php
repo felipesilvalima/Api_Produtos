@@ -3,6 +3,7 @@
 namespace app\controller;
 
 use app\helpers\Methods;
+use app\model\Conexao;
 use app\model\ProdutoModel;
 use app\validation\AtributesValidation;
 use app\validation\ProdutoValidation;
@@ -13,9 +14,9 @@ class ProdutoController
 {
     private $ProdutoModel;
     
-    public function __construct()
+    public function __construct($model)
     {
-        $this->ProdutoModel = new ProdutoModel();
+        $this->ProdutoModel = $model;
     }
     
     public function exibirProdutos()

@@ -4,7 +4,6 @@ namespace app\model;
 
 use app\helpers\Attributes;
 use app\middleware\AuthMiddleware;
-use app\model\Conexao;
 use ErrorException;
 use Exception;
 use PDO;
@@ -25,9 +24,9 @@ class ProdutoModel
     
     private static $conexao;
 
-    public function __construct()
+    public function __construct($db)
     {
-        self::$conexao = new Conexao();
+        self::$conexao = $db;
     }
 
     public function exibirTodosProdutos()
@@ -45,7 +44,7 @@ class ProdutoModel
             F.*,
             F.id As f_id  
             FROM Produtos AS P INNER JOIN categoria AS C ON P.categoria_id = C.id  INNER JOIN fornecedor AS F ON P.fornecedor_id = F.id"; // SQL para listar todos os produtos
-            $stm = self::$conexao->Conexao()->prepare($sql);  // Prepara a query
+            $stm = self::$conexao->prepare($sql);  // Prepara a query
             $stm->execute();                            // Executa a query
 
             $listarProdutos = $stm->fetchAll(PDO::FETCH_OBJ); // Pega todos os resultados como objetos
@@ -92,7 +91,7 @@ class ProdutoModel
             }
                 finally 
                 {
-                    self::$conexao::closeConexao(); //fechando conexão
+                    Conexao::closeConexao(); //fechando conexão
                 }
     }
 
@@ -110,7 +109,7 @@ class ProdutoModel
             F.*,
             F.id As f_id  
             FROM Produtos AS P INNER JOIN categoria AS C ON P.categoria_id = C.id  INNER JOIN fornecedor AS F ON P.fornecedor_id = F.id WHERE P.id = :id"; // SQL para listar todos os produtos
-            $stm = self::$conexao->Conexao()->prepare($sql);  // Prepara a query
+            $stm = self::$conexao->prepare($sql);  // Prepara a query
             $stm->bindParam(':id', $id, PDO::PARAM_INT); // passando o parâmetro
             $stm->execute(); // Executa a query
 
@@ -154,7 +153,7 @@ class ProdutoModel
             }
                 finally 
                 {
-                    self::$conexao::closeConexao(); //fechando conexão
+                    Conexao::closeConexao(); //fechando conexão
                 }
     }
 
@@ -176,7 +175,7 @@ class ProdutoModel
             $sql = "INSERT INTO 
             produtos(produto,descricao,preco,quantidade_max,quantidade_min,unidade_medida,categoria_id,fornecedor_id,usuario_id)
             VALUES(:produto, :descricao, :preco, :quantidade, :quantidade_min, :unidade_medida, :categoria_id, :fornecedor_id, :usuario_id)"; // SQL para listar todos os produtos
-            $stm = self::$conexao->Conexao()->prepare($sql);  // Prepara a query
+            $stm = self::$conexao->prepare($sql);  // Prepara a query
             $stm->bindParam(':produto', $this->produto, PDO::PARAM_STR); // passando o parâmetro
             $stm->bindParam(':descricao', $this->descricao, PDO::PARAM_STR); // passando o parâmetro
             $stm->bindParam(':preco', $this->preco, PDO::PARAM_STR); // passando o parâmetro
@@ -203,7 +202,7 @@ class ProdutoModel
             }
                 finally 
                 {
-                    self::$conexao::closeConexao(); //fechando conexão
+                    Conexao::closeConexao(); //fechando conexão
                 }
     }
 
@@ -224,7 +223,7 @@ class ProdutoModel
 
             $sql = "UPDATE produtos
             SET produto=:produto, descricao=:descricao, preco=:preco, quantidade_max=:quantidade, quantidade_min=:quantidade_min, unidade_medida=:unidade_medida, categoria_id=:categoria_id, fornecedor_id=:fornecedor_id, usuario_id=:usuario_id WHERE id = :id"; // SQL para listar todos os produtos
-            $stm = self::$conexao->Conexao()->prepare($sql);  // Prepara a query
+            $stm = self::$conexao->prepare($sql);  // Prepara a query
             $stm->bindParam(':id', $this->id, PDO::PARAM_INT); // passando o parâmetro
             $stm->bindParam(':produto', $this->produto, PDO::PARAM_STR); // passando o parâmetro
             $stm->bindParam(':descricao', $this->descricao, PDO::PARAM_STR); // passando o parâmetro
@@ -251,7 +250,7 @@ class ProdutoModel
             }
                 finally 
                 {
-                    self::$conexao::closeConexao(); //fechando conexão
+                    Conexao::closeConexao(); //fechando conexão
                 }
     }
 
@@ -275,7 +274,7 @@ class ProdutoModel
 
             $sql = "UPDATE produtos
             SET produto=:produto, descricao=:descricao, preco=:preco, quantidade_max=:quantidade, quantidade_min=:quantidade_min, unidade_medida=:unidade_medida, categoria_id=:categoria_id, fornecedor_id=:fornecedor_id, usuario_id=:usuario_id WHERE id = :id"; // SQL para listar todos os produtos
-            $stm = self::$conexao->Conexao()->prepare($sql);  // Prepara a query
+            $stm = self::$conexao->prepare($sql);  // Prepara a query
             $stm->bindParam(':id', $this->id, PDO::PARAM_INT); // passando o parâmetro
             $stm->bindParam(':produto', $this->produto, PDO::PARAM_STR); // passando o parâmetro
             $stm->bindParam(':descricao', $this->descricao, PDO::PARAM_STR); // passando o parâmetro
@@ -302,7 +301,7 @@ class ProdutoModel
             }
                 finally 
                 {
-                    self::$conexao::closeConexao(); //fechando conexão
+                    Conexao::closeConexao(); //fechando conexão
                 }
     }
 
@@ -312,7 +311,7 @@ class ProdutoModel
         {
 
             $sql = "DELETE FROM produtos WHERE id = :id"; // SQL para remover uma listar de produto
-            $stm = self::$conexao->Conexao()->prepare($sql); // Prepara a query
+            $stm = self::$conexao->prepare($sql); // Prepara a query
             $stm->bindParam(':id', $id, PDO::PARAM_INT); // passando o parâmetro
             $stm->execute(); // Executa a query
 
@@ -329,7 +328,7 @@ class ProdutoModel
             }
                 finally 
                 {
-                    self::$conexao::closeConexao(); //fechando conexão
+                    Conexao::closeConexao(); //fechando conexão
                 }
     }
 
@@ -338,7 +337,7 @@ class ProdutoModel
         try 
         {
             $sql = "SELECT produto FROM produtos WHERE produto = :produto AND id != :id"; // SQL para verificar produto
-            $stm = self::$conexao->Conexao()->prepare($sql);  // Prepara a query
+            $stm = self::$conexao->prepare($sql);  // Prepara a query
             $stm->bindParam(':produto', $produto, PDO::PARAM_STR); // passando o parâmetro
             $stm->bindParam(':id', $id, PDO::PARAM_INT); // passando o parâmetro
             $stm->execute(); // Executa a query
@@ -358,7 +357,7 @@ class ProdutoModel
             }
                 finally 
                 {
-                    self::$conexao::closeConexao(); //fechando conexão
+                    Conexao::closeConexao(); //fechando conexão
                 }
     }
 
@@ -367,7 +366,7 @@ class ProdutoModel
         try
         {
             $sql = "SELECT id FROM $table WHERE $atributo = :value";
-            $stm = self::$conexao->Conexao()->prepare($sql);
+            $stm = self::$conexao->prepare($sql);
             $stm->bindParam(':value', $value);
             $stm->execute(); 
 
@@ -386,7 +385,7 @@ class ProdutoModel
             }
                 finally 
                 {
-                    self::$conexao::closeConexao(); //fechando conexão
+                    Conexao::closeConexao(); //fechando conexão
                 }
     }
     
@@ -396,7 +395,7 @@ class ProdutoModel
         {
                    
             $sql = Attributes::QueryFilter($atributos, $atributos_categoria, $atributos_fornecedor, $filtro);               
-            $stm = self::$conexao->Conexao()->prepare($sql);  // Prepara a query
+            $stm = self::$conexao->prepare($sql);  // Prepara a query
             $stm->execute(); // Executa a query
             
             $lines = $stm->fetchall(PDO::FETCH_OBJ); // Pega o resultados como objetos
@@ -464,7 +463,7 @@ class ProdutoModel
             }
                 finally 
                 {
-                    self::$conexao::closeConexao(); //fechando conexão
+                    Conexao::closeConexao(); //fechando conexão
                 } 
     } 
 }

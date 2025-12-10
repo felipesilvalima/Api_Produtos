@@ -4,6 +4,7 @@ namespace app\controller;
 
 use app\middleware\AuthMiddleware;
 use app\model\AuthModel;
+use app\model\Conexao;
 use app\validation\AuthValidation;
 use PDOException;
 
@@ -11,9 +12,9 @@ class AuthController
 {
     private $AuthModel;
 
-    public function __construct()
+    public function __construct($model)
     {
-        $this->AuthModel = new AuthModel;
+        $this->AuthModel = $model;
     }
 
     public function Login()
