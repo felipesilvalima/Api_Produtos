@@ -30,27 +30,17 @@ class AuthModel
             $stm = self::$conexao->prepare($sql); // preparando sql
             $stm->bindParam(':email',$this->email, PDO::PARAM_STR); //passando pârametro
             $stm->execute(); // executando sql
-    
-                if($stm->rowCount() > 0) // se existir o email no banco
+            $user = $stm->fetchObject(); // pegando as credencias do  banco
+
+                if($user && password_verify($this->password,$user->password)) // se existir o email no banco
                 {
-                    $data = $stm->fetchObject(); // pegando as credencias do  banco
+                    $data = [
+                        "id" => $user->id,
+                        "nome" => $user->name,
+                        "email" => $user->email
+                    ];
 
-                    if(password_verify($this->password,$data->password)) // verificando se a senha está correta
-                    {
-                        $datas = [
-                            "id" => $data->id,
-                            "nome" => $data->name,
-                            "email" => $data->email
-                        ];
-
-                        return $datas;
-                    }
-                        else // senha inválida
-                        {
-                            return false;
-                        }
-            
-
+                    return $data;
                 }
                     else // usuario inválido
                     {
