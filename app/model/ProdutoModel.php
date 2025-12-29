@@ -465,5 +465,37 @@ class ProdutoModel
                 {
                     Conexao::closeConexao(); //fechando conexão
                 } 
-    } 
+    }
+    
+    public function entrada_quantidade(int $idProduto, int $quantidadeEntrada, int $quantidadeTotal)
+    {
+        try
+        {
+            if(is_numeric($idProduto) && !empty($idProduto))
+            {
+                $this->quantidade += $quantidadeTotal + $quantidadeEntrada;
+
+                $query = "UPDATE produtos SET quantidade_max=:qt WHERE id = :idProduto";
+                $stm = self::$conexao->prepare($query);
+                $stm->bindParam(':idProduto', $idProduto, PDO::PARAM_INT);
+                $stm->bindParam(':qt', $this->quantidade, PDO::PARAM_INT);
+                $stm->execute();
+
+                if($stm)
+                {
+                   $produto = $this->exibirProdutosId($idProduto);          
+                    return $produto['quantidade'];
+                }
+                
+            }
+
+            return false;
+
+        }
+            catch(PDOException $error)
+            {
+                http_response_code(500);
+                throw new Exception("Error no banco de dados ". $error->getMessage());
+            }
+    }
 }

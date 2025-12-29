@@ -3,7 +3,6 @@
 namespace app\controller;
 
 use app\helpers\Methods;
-use app\model\Conexao;
 use app\model\ProdutoModel;
 use app\validation\AtributesValidation;
 use app\validation\ProdutoValidation;
@@ -220,6 +219,7 @@ class ProdutoController
 
                     if(!empty($respostasDinamicas)) // se as respostaDinamicas não forem vazias  
                     {
+                        http_response_code(400);
                         echo json_encode($respostasDinamicas); // return json de respostaDinamicas
                         die;
                     }
@@ -338,7 +338,72 @@ class ProdutoController
             catch (PDOException $e) 
             {
                 http_response_code(500);
-                echo json_encode(["error" => $e->getMessage()]);  
+                echo json_encode(["error " => $e->getMessage()]);  
+            }
+    }
+
+    public function entradaEstoque(int $idProduto)
+    {
+        try
+        {
+            if(is_numeric($idProduto) && !empty($idProduto))
+            {
+                $quantidadeEntrada = Methods::requestPut();
+
+
+                $request = ProdutoValidation::validationAllData($quantidadeEntrada);
+
+                    if(isset($request['quantidade']))
+                    {
+
+                        foreach($request['quantidade'] as $response)
+                        {
+                                    
+                            $respostasDinamicas['quantidade'] = $response;
+                            
+                        }
+    
+                        if(!empty($respostasDinamicas)) // se as respostaDinamicas não forem vazias  
+                        {
+                            http_response_code(400);
+                            echo json_encode($respostasDinamicas);
+                            die;
+                        }
+                    }
+
+                    $produto = $this->ProdutoModel->exibirProdutosId((int)$idProduto);
+
+                    if($produto)
+                    {
+                         
+                        $quantidadeTotal = $this->ProdutoModel->entrada_quantidade((int)$produto['id'],(int)$quantidadeEntrada['quantidade'], (int)$produto['quantidade']);
+
+                        http_response_code(200);
+                        echo json_encode([
+                            "status" => true,
+                            "mensagem" => "Quantidade de produto atualizada!!",
+                            "quantidade" => $quantidadeTotal
+                        ]);
+                        
+                    }
+                        else
+                        {
+                            http_response_code(404);
+                            echo json_encode([
+                                "status" => false,
+                                "mensagem" => "Produto não encontrado"
+                            ]);
+                        }
+
+            }    
+            
+        }
+            catch(PDOException $error)
+            {
+                http_response_code(500);
+                echo json_encode([
+                    "error" => $error->getMessage()
+                ]);
             }
     }
 

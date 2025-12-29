@@ -99,7 +99,7 @@ class Router
                   elseif($method === 'PUT' || $method === 'PATCH')
                   {
                       AuthMiddleware::Headles();
-                      $produtoController->UpdateProdutos((int)$id);
+                      $produtoController->UpdateProdutos((int)$id);   
                   }
                     elseif($method === 'DELETE')
                     {
@@ -114,13 +114,20 @@ class Router
                         die;
                       }
             
-            } 
-              else 
+            }
+              elseif(preg_match("/^\/produtos\/entradaestoque\/(\d+)$/", $request, $matches))
               {
-                 // Se a rota não existir
-                http_response_code(404);
-                echo json_encode(["erro" => "Rota não encontrada"]);
-              }
+                $id = $matches[1];
+
+                AuthMiddleware::Headles();
+                $produtoController->entradaEstoque((int)$id);
+              } 
+                else 
+                {
+                  // Se a rota não existir
+                  http_response_code(404);
+                  echo json_encode(["erro" => "Rota não encontrada"]);
+                }
 
 
 

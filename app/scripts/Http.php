@@ -44,19 +44,19 @@ class Http
     {
         $ch = curl_init(); // inicializando o curl
         
-       curl_setopt_array($ch, [
-    CURLOPT_URL => $url,
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_SSL_VERIFYPEER => false,
-    CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_CONNECTTIMEOUT => 5,
-    CURLOPT_TIMEOUT => 10,
-    CURLOPT_POST => true,
-    CURLOPT_POSTFIELDS => [
-        "email" => $email,
-        "senha" => $senha
-    ],
-]);
+        curl_setopt_array($ch, [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_CONNECTTIMEOUT => 5,
+            CURLOPT_TIMEOUT => 10,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => [
+                "email" => $email,
+                "senha" => $senha
+            ],
+        ]);
 
             $error = curl_error($ch); // error do curl
             $status = curl_getinfo($ch, CURLINFO_HTTP_CODE); // status da resposta
