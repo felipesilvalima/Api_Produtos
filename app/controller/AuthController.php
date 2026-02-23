@@ -4,7 +4,6 @@ namespace app\controller;
 
 use app\middleware\AuthMiddleware;
 use app\model\AuthModel;
-use app\model\Conexao;
 use app\validation\AuthValidation;
 use PDOException;
 

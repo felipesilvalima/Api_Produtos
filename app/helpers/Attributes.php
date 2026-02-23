@@ -2,7 +2,7 @@
 
 namespace app\helpers;
 
-class Attributes
+trait Attributes
 {
     public static function QueryFilter(string $atributos, string $atributos_categoria, string $atributos_fornecedor, string $filtro): string
     {

@@ -2,7 +2,7 @@
 
 namespace app\helpers;
 
-class Methods
+trait Methods
 {
     public static function requestPut()
     {

@@ -1,6 +1,8 @@
 <?php declare(strict_types=1); 
 
 namespace app\model;
+
+use app\config\Database;
 use Exception;
 use Firebase\JWT\JWT;
 use PDO;
@@ -53,7 +55,7 @@ class AuthModel
             }
                 finally
                 {
-                    Conexao::closeConexao(); // fechar conexao
+                    Database::closeConexao(); // fechar conexao
                 }
         
     }
@@ -106,7 +108,7 @@ class AuthModel
             }
                 finally
                 {
-                    Conexao::closeConexao();
+                    Database::closeConexao();
                 }
             
     }
@@ -137,7 +139,7 @@ class AuthModel
             }
                 finally
                 {
-                    Conexao::closeConexao();
+                    Database::closeConexao();
                 }
     }
 
@@ -166,7 +168,7 @@ class AuthModel
             }
                 finally
                 {
-                    Conexao::closeConexao();
+                    Database::closeConexao();
                 }
     }
 }

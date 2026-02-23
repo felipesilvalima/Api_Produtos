@@ -2,6 +2,7 @@
 
 namespace app\model;
 
+use app\config\Database;
 use app\helpers\Attributes;
 use app\middleware\AuthMiddleware;
 use ErrorException;
@@ -10,6 +11,7 @@ use PDO;
 use PDOException;
 class ProdutoModel
 {
+    use Attributes;
 
     private $id;
     private $produto;
@@ -91,7 +93,7 @@ class ProdutoModel
             }
                 finally 
                 {
-                    Conexao::closeConexao(); //fechando conexão
+                     Database::closeConexao(); //fechando conexão
                 }
     }
 
@@ -153,7 +155,7 @@ class ProdutoModel
             }
                 finally 
                 {
-                    Conexao::closeConexao(); //fechando conexão
+                     Database::closeConexao(); //fechando conexão
                 }
     }
 
@@ -202,7 +204,7 @@ class ProdutoModel
             }
                 finally 
                 {
-                    Conexao::closeConexao(); //fechando conexão
+                     Database::closeConexao(); //fechando conexão
                 }
     }
 
@@ -250,7 +252,7 @@ class ProdutoModel
             }
                 finally 
                 {
-                    Conexao::closeConexao(); //fechando conexão
+                     Database::closeConexao(); //fechando conexão
                 }
     }
 
@@ -301,7 +303,7 @@ class ProdutoModel
             }
                 finally 
                 {
-                    Conexao::closeConexao(); //fechando conexão
+                     Database::closeConexao(); //fechando conexão
                 }
     }
 
@@ -328,7 +330,7 @@ class ProdutoModel
             }
                 finally 
                 {
-                    Conexao::closeConexao(); //fechando conexão
+                    Database::closeConexao(); //fechando conexão
                 }
     }
 
@@ -357,7 +359,7 @@ class ProdutoModel
             }
                 finally 
                 {
-                    Conexao::closeConexao(); //fechando conexão
+                     Database::closeConexao(); //fechando conexão
                 }
     }
 
@@ -385,7 +387,7 @@ class ProdutoModel
             }
                 finally 
                 {
-                    Conexao::closeConexao(); //fechando conexão
+                     Database::closeConexao(); //fechando conexão
                 }
     }
     
@@ -394,7 +396,7 @@ class ProdutoModel
         try 
         {
                    
-            $sql = Attributes::QueryFilter($atributos, $atributos_categoria, $atributos_fornecedor, $filtro);               
+            $sql = self::QueryFilter($atributos, $atributos_categoria, $atributos_fornecedor, $filtro);               
             $stm = self::$conexao->prepare($sql);  // Prepara a query
             $stm->execute(); // Executa a query
             
@@ -463,7 +465,7 @@ class ProdutoModel
             }
                 finally 
                 {
-                    Conexao::closeConexao(); //fechando conexão
+                     Database::closeConexao(); //fechando conexão
                 } 
     }
     

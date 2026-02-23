@@ -1,14 +1,13 @@
 <?php declare(strict_types=1); 
 
-namespace app\model;
-
+namespace app\config;
 use Exception;
 use PDO;
 use PDOException;
 
-class Conexao
+class Database
 {
-    private static $conexao = null;
+   private static $conexao = null;
 
     public static function Conexao()
     { 
@@ -17,9 +16,9 @@ class Conexao
             if(!self::$conexao || self::$conexao === null)
             {
                 self::$conexao = new PDO(
-                    "mysql:host=" . $_ENV['DB_HOST'] . ";dbname=" . $_ENV['DB_NAME'],
-                    $_ENV['DB_USER'],      // usuário do banco
-                    $_ENV['DB_PASS']   // senha do banco
+                    "mysql:host=" . getenv('DB_HOST'). ";dbname=" . getenv('DB_NAME'),
+                    getenv('DB_USER'),      // usuário do banco
+                    getenv('DB_PASS')  // senha do banco
                 ); // Cria a conexão PDO
     
                 self::$conexao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Configura para lançar exceções
@@ -39,6 +38,5 @@ class Conexao
         {
             self::$conexao = null; 
         }
-    }
-
+    } 
 }

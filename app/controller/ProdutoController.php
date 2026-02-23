@@ -11,6 +11,8 @@ use PDOException;
 
 class ProdutoController
 {
+    use Methods;
+
     private $ProdutoModel;
     
     public function __construct($model)
@@ -179,7 +181,7 @@ class ProdutoController
             if(isset($id))
             {
 
-                $request = Methods::requestPut(); // pegando requisição PUT
+                $request = self::requestPut(); // pegando requisição PUT
 
                 $notRequestID = $request; // pegando a penas a requsição sem id
 
@@ -348,7 +350,7 @@ class ProdutoController
         {
             if(is_numeric($idProduto) && !empty($idProduto))
             {
-                $quantidadeEntrada = Methods::requestPut();
+                $quantidadeEntrada = self::requestPut();
 
 
                 $request = ProdutoValidation::validationAllData($quantidadeEntrada);
